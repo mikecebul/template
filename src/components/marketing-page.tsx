@@ -1,113 +1,47 @@
 import {
   IconArrowRight,
-  IconCheck,
+  IconBolt,
+  IconBrandZoom,
   IconCpu,
   IconMapPin,
-  IconPresentationAnalytics,
+  IconNotebook,
   IconSparkles,
   IconWorldWww,
 } from "@tabler/icons-react";
-import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import type { ComponentProps, ReactNode } from "react";
+import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
-import { buttonVariants } from "@/components/ui/button";
+import { ContactForm } from "@/components/contact-form";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import type { CaseStudyData, MarketingPath } from "@/lib/marketing-content";
+import {
+  aboutHighlights,
+  blogPosts,
+  caseStudies,
+  dataVisualizationImageSrc,
+  heroImageSrc,
+  marketingServices,
+  officeImageSrc,
+  processSteps,
+  servicePrinciples,
+} from "@/lib/marketing-content";
 import { cn } from "@/lib/utils";
 
-const heroImageSrc = "/marketing/lighthouse.jpg";
-const officeImageSrc = "/marketing/modern-office.jpg";
-const dataVisualizationImageSrc = "/marketing/data-visualization.jpg";
-
-type ServiceIcon = typeof IconSparkles;
-
-type HeroContent = {
-  eyebrow: string;
-  primaryCta: ComponentProps<typeof MarketingButtonLink>;
-  secondaryCta: ComponentProps<typeof MarketingButtonLink>;
-};
-
-type ServicesSectionContent = {
-  eyebrow: string;
-  heading: string;
-};
-
-type CtaSectionContent = {
-  primaryCta: ComponentProps<typeof MarketingButtonLink>;
-  secondaryCta: ComponentProps<typeof MarketingButtonLink>;
-};
-
-type ServiceCardData = {
-  bullets: string[];
-  ctaLabel: string;
-  description: string[];
-  eyebrow: string;
-  featured?: boolean;
-  icon: ServiceIcon;
-  note?: string;
-  price: string;
-  priceSuffix: string;
-  title: string;
-};
-
-const serviceCards: ServiceCardData[] = [
-  {
-    bullets: ["Workflow Auditing", "AI Implementation Workshops", "Process Optimization"],
-    ctaLabel: "Inquire for Dates",
-    description: [
-      "Learn to leverage LLMs and automated workflows to reduce overhead and focus on creative growth.",
-      "Personalized training for your specific business needs.",
-    ],
-    eyebrow: "Teaching & Integration",
-    icon: IconSparkles,
-    price: "$285",
-    priceSuffix: "/day",
-    title: "AI & Automation Consulting",
-  },
-  {
-    bullets: ["Unlimited Content Edits", "Custom Responsive Design", "SEO & Speed Optimization"],
-    ctaLabel: "View Portfolio",
-    description: [
-      "High-conversion websites optimized for speed and SEO.",
-      "Includes unlimited future edits so your digital presence never goes out of date.",
-    ],
-    eyebrow: "Managed Performance",
-    featured: true,
-    icon: IconWorldWww,
-    note: "+$100/mo management",
-    price: "$600",
-    priceSuffix: "setup",
-    title: "Marketing Websites",
-  },
-  {
-    bullets: ["Equipment Procurement", "On-site Installation", "Continuous IT Management"],
-    ctaLabel: "Consult on Hardware",
-    description: [
-      "Bridging the gap between in-person and remote.",
-      "Professional AV setups for medium-sized firms who demand broadcast-quality clarity.",
-    ],
-    eyebrow: "Corporate Audio/Visual",
-    icon: IconPresentationAnalytics,
-    note: "+ equipment + $100/mo",
-    price: "$2000",
-    priceSuffix: "setup",
-    title: "Hybrid Meeting Solutions",
-  },
-];
-
-const differentiators = [
-  {
-    body: "I'm just a short drive away. No timezone lag, no outsourcing. Local support for local visionaries.",
-    icon: IconMapPin,
-    title: "Charlevoix Presence",
-  },
-  {
-    body: "Every project uses modern stacks and thoughtful systems, from performant websites to advanced automation layers.",
-    icon: IconCpu,
-    title: "Technical Excellence",
-  },
-];
-
-const sharedServicesSectionDescription =
-  "The services page stays faithful to the Figma tray layout. The homepage uses the same visual system, but frames these offers as an overview before someone dives deeper.";
+const serviceIconMap = {
+  "AI & automation consulting": IconSparkles,
+  "Hybrid meeting solutions": IconBrandZoom,
+  "Marketing websites": IconWorldWww,
+} as const;
 
 export function MarketingLayout() {
   const pathname = useRouterState({
@@ -117,7 +51,7 @@ export function MarketingLayout() {
   return (
     <div
       id="top"
-      className="min-h-svh bg-[radial-gradient(circle_at_top,_rgba(123,208,255,0.14),_transparent_0_28%),linear-gradient(180deg,_var(--marketing-ink)_0%,_#07101f_100%)] text-[var(--marketing-heading)]"
+      className="min-h-svh bg-[radial-gradient(circle_at_top,_rgba(123,208,255,0.16),_transparent_0_24%),linear-gradient(180deg,_#0b1326_0%,_#08101f_48%,_#0b1326_100%)] text-[var(--marketing-heading)]"
     >
       <MarketingNav pathname={pathname} />
       <Outlet />
@@ -129,41 +63,81 @@ export function MarketingLayout() {
 export function MarketingHomePage() {
   return (
     <MarketingPageMain>
-      <MarketingHero
-        content={{
-          eyebrow: "Northern Michigan digital consulting",
-          primaryCta: {
-            children: "Explore Services",
-            to: "/services",
-          },
-          secondaryCta: {
-            children: "Learn About the Approach",
-            href: "#about",
-            tone: "secondary",
-          },
-        }}
-      />
-      <MarketingServicesSection
-        content={{
-          eyebrow: "Featured Services",
-          heading: "Built for operators who need momentum, not fluff.",
-        }}
-        cardCtaHref="/services#cta"
-      />
-      <MarketingAboutSection />
-      <MarketingCtaSection
-        content={{
-          primaryCta: {
-            children: "Schedule a Consultation",
-            href: "/services#pricing",
-          },
-          secondaryCta: {
-            children: "View Pricing Details",
-            to: "/services",
-            tone: "secondary",
-          },
-        }}
-      />
+      <section className="mx-auto grid max-w-[1220px] gap-8 px-4 pt-6 sm:px-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.85fr)] lg:items-center lg:px-12">
+        <div className="flex flex-col gap-6">
+          <MarketingEyebrow>Charlevoix, Michigan</MarketingEyebrow>
+          <div className="max-w-3xl space-y-4">
+            <h1 className="font-heading text-5xl leading-[0.92] tracking-[-0.07em] text-balance sm:text-6xl lg:text-7xl">
+              Elevating
+              <span className="block text-[var(--marketing-gold)]">Precision</span>
+              <span className="block">through Technology.</span>
+            </h1>
+            <p className="max-w-2xl text-base leading-7 text-[var(--marketing-copy)] sm:text-lg">
+              Mike Cebulski is a technical consultant bridging the gap between hardware, automation,
+              and high-performance web systems.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <MarketingButtonLink to="/contact">Start a Project</MarketingButtonLink>
+            <MarketingButtonLink tone="secondary" to="/services">
+              View Services
+            </MarketingButtonLink>
+          </div>
+        </div>
+
+        <div className="relative overflow-hidden rounded-[32px] border border-white/8 bg-[var(--marketing-panel)] p-3 shadow-[0_30px_80px_rgba(0,0,0,0.4)]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,236,185,0.16),_transparent_38%)]" />
+          <div className="relative overflow-hidden rounded-[24px]">
+            <img
+              alt="Charlevoix lighthouse at dusk"
+              className="h-[420px] w-full object-cover"
+              src={heroImageSrc}
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,19,38,0.08),rgba(11,19,38,0.82))]" />
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-6 p-6">
+              <div>
+                <p className="text-xs font-medium tracking-[0.3em] text-[var(--marketing-sky)] uppercase">
+                  Independent consultant
+                </p>
+                <p className="mt-2 max-w-xs font-heading text-2xl tracking-[-0.05em] text-[var(--marketing-heading)]">
+                  Technical direction with a local, hands-on approach.
+                </p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <MarketingStatCard label="Focus" value="Web, AV, automation" />
+                <MarketingStatCard label="Based in" value="Charlevoix, MI" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto mt-20 grid max-w-[1220px] gap-10 bg-[rgba(19,27,46,0.72)] px-4 py-14 sm:px-6 lg:grid-cols-[0.95fr_1.1fr] lg:px-12">
+        <div className="space-y-3">
+          <MarketingEyebrow>Background</MarketingEyebrow>
+          <h2 className="max-w-md font-heading text-3xl tracking-[-0.06em] sm:text-4xl">
+            Technical Mind. Strategic Vision.
+          </h2>
+        </div>
+        <div className="space-y-5 text-base leading-8 text-[var(--marketing-copy)]">
+          <p>
+            Based in the nautical heart of Charlevoix, MI, I operate at the intersection of complex
+            problem solving and elegant technical execution. My mission is to provide businesses
+            with the technical backbone they need to scale without friction.
+          </p>
+          <p>
+            Whether I&apos;m architecting a custom web experience or designing an automated
+            boardroom workflow, the focus stays the same: reliability, performance, and future-proof
+            design.
+          </p>
+          <MarketingInlineLink to="/about">Learn more about the journey</MarketingInlineLink>
+        </div>
+      </section>
+
+      <MarketingServicesOverview />
+      <MarketingLocalRootsSection />
+      <MarketingPreviewGrid />
+      <MarketingCtaSection />
     </MarketingPageMain>
   );
 }
@@ -171,41 +145,432 @@ export function MarketingHomePage() {
 export function MarketingServicesPage() {
   return (
     <MarketingPageMain>
-      <MarketingHero
-        content={{
-          eyebrow: "Based in Charlevoix, MI",
-          primaryCta: {
-            children: "View Pricing Details",
-            href: "#pricing",
-          },
-          secondaryCta: {
-            children: "Book Consultation",
-            href: "#cta",
-            tone: "secondary",
-          },
-        }}
+      <MarketingPageHero
+        eyebrow="Services"
+        title="Technical services shaped around clarity, trust, and momentum."
+        body="From sharper marketing sites to hybrid room systems and workflow automation, each engagement is designed to stay useful beyond launch week."
       />
-      <MarketingServicesSection
-        content={{
-          eyebrow: "Core Services",
-          heading: "Consulting and build packages that stay practical.",
-        }}
-        cardCtaHref="#cta"
+
+      <MarketingServicesOverview />
+
+      <section className="mx-auto mt-20 grid max-w-[1220px] gap-6 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-12">
+        <div className="rounded-[32px] border border-white/8 bg-[var(--marketing-panel)] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.3)]">
+          <MarketingEyebrow>Engagement style</MarketingEyebrow>
+          <h2 className="mt-3 font-heading text-3xl tracking-[-0.05em]">
+            A flexible model for scoped builds and longer-term support.
+          </h2>
+          <div className="mt-6 space-y-4 text-[15px] leading-7 text-[var(--marketing-copy)]">
+            <p>
+              Some projects start with a fast diagnostic and recommendation sprint. Others move
+              straight into implementation and ongoing refinement. The structure depends on how much
+              clarity already exists.
+            </p>
+            <p>
+              The goal is always the same: reduce friction, improve confidence, and leave you with a
+              system that feels easier to operate.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-4">
+          {servicePrinciples.map((principle) => (
+            <Card
+              key={principle.title}
+              className="rounded-[28px] border border-white/8 bg-[rgba(19,27,46,0.9)] py-0 text-[var(--marketing-heading)] ring-0"
+            >
+              <CardHeader className="gap-3 px-6 pt-6">
+                <CardTitle className="text-xl">{principle.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="px-6 pb-6 text-sm leading-7 text-[var(--marketing-copy)]">
+                {principle.body}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto mt-20 max-w-[1220px] px-4 sm:px-6 lg:px-12">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {processSteps.map((step) => (
+            <div
+              key={step.number}
+              className="rounded-[28px] border border-white/8 bg-[rgba(19,27,46,0.78)] p-6"
+            >
+              <p className="text-sm tracking-[0.28em] text-[var(--marketing-gold)] uppercase">
+                {step.number}
+              </p>
+              <h3 className="mt-4 font-heading text-2xl tracking-[-0.04em]">{step.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-[var(--marketing-copy)]">{step.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <MarketingCtaSection />
+    </MarketingPageMain>
+  );
+}
+
+export function MarketingAboutPage() {
+  return (
+    <MarketingPageMain>
+      <section className="mx-auto grid max-w-[1220px] gap-8 px-4 pt-6 sm:px-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.9fr)] lg:items-start lg:px-12">
+        <div className="space-y-5">
+          <MarketingEyebrow>About Mike</MarketingEyebrow>
+          <h1 className="max-w-3xl font-heading text-5xl leading-[0.94] tracking-[-0.07em] sm:text-6xl">
+            Perspective from the North.
+          </h1>
+          <p className="max-w-2xl text-base leading-8 text-[var(--marketing-copy)] sm:text-lg">
+            I build the systems around the work: websites that communicate clearly, spaces that
+            support collaboration, and automation that makes the day-to-day feel less wasteful.
+          </p>
+        </div>
+
+        <div className="rounded-[32px] border border-white/8 bg-[linear-gradient(180deg,rgba(19,27,46,0.96),rgba(9,16,31,0.96))] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.32)]">
+          <img
+            alt="A modern office interior with strong natural light"
+            className="h-[360px] w-full rounded-[24px] object-cover"
+            src={officeImageSrc}
+          />
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <MarketingStatCard label="Home base" value="Charlevoix, Michigan" />
+            <MarketingStatCard label="Working style" value="Direct and detail-minded" />
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto mt-16 max-w-[1220px] px-4 sm:px-6 lg:px-12">
+        <div className="grid gap-4 lg:grid-cols-3">
+          {aboutHighlights.map((highlight, index) => (
+            <Card
+              key={highlight.title}
+              className={cn(
+                "rounded-[28px] border border-white/8 bg-[rgba(19,27,46,0.82)] py-0 text-[var(--marketing-heading)] ring-0",
+                index === 1 && "bg-[rgba(34,42,61,0.95)]",
+              )}
+            >
+              <CardHeader className="px-6 pt-6">
+                <CardTitle className="text-xl">{highlight.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="px-6 pb-6 text-sm leading-7 text-[var(--marketing-copy)]">
+                {highlight.body}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto mt-20 grid max-w-[1220px] gap-8 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-12">
+        <div className="overflow-hidden rounded-[32px] border border-white/8 bg-[var(--marketing-panel)]">
+          <img
+            alt="Glowing technical data visualization"
+            className="h-full min-h-[420px] w-full object-cover"
+            src={dataVisualizationImageSrc}
+          />
+        </div>
+        <div className="flex flex-col justify-center gap-6">
+          <MarketingEyebrow>Why work with an specialist?</MarketingEyebrow>
+          <h2 className="font-heading text-3xl tracking-[-0.05em] sm:text-4xl">
+            Technical depth without the distance.
+          </h2>
+          <p className="text-base leading-8 text-[var(--marketing-copy)]">
+            I like systems that are both convincing and calm. That usually means less noise, better
+            structure, and a stronger relationship between design decisions and business outcomes.
+          </p>
+          <div className="grid gap-4">
+            <MarketingChecklistItem>
+              Thoughtful execution across interface, infrastructure, and room experience.
+            </MarketingChecklistItem>
+            <MarketingChecklistItem>
+              A local point of contact who understands context as well as craft.
+            </MarketingChecklistItem>
+            <MarketingChecklistItem>
+              Deliverables that feel polished without becoming hard to maintain.
+            </MarketingChecklistItem>
+          </div>
+        </div>
+      </section>
+
+      <MarketingCtaSection />
+    </MarketingPageMain>
+  );
+}
+
+export function MarketingBlogPage() {
+  const [featuredPost, ...supportingPosts] = blogPosts;
+
+  return (
+    <MarketingPageMain>
+      <MarketingPageHero
+        eyebrow="Journal"
+        title="Latest insights and technical deep dives."
+        body="A few notes on modern websites, calmer systems, and how to make new technology feel less chaotic inside real businesses."
       />
-      <MarketingAboutSection />
-      <MarketingCtaSection
-        content={{
-          primaryCta: {
-            children: "Schedule a Consultation",
-            href: "#pricing",
-          },
-          secondaryCta: {
-            children: "View Pricing Details",
-            href: "#services",
-            tone: "secondary",
-          },
-        }}
-      />
+
+      <section className="mx-auto mt-16 grid max-w-[1220px] gap-6 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:px-12">
+        <article className="overflow-hidden rounded-[34px] border border-white/8 bg-[rgba(19,27,46,0.85)] shadow-[0_26px_70px_rgba(0,0,0,0.3)]">
+          <img
+            alt={featuredPost.imageAlt}
+            className="h-[320px] w-full object-cover"
+            src={featuredPost.imageSrc}
+          />
+          <div className="p-8">
+            <p className="text-sm tracking-[0.28em] text-[var(--marketing-sky)] uppercase">
+              {featuredPost.category}
+            </p>
+            <h2 className="mt-3 max-w-2xl font-heading text-4xl tracking-[-0.06em]">
+              {featuredPost.title}
+            </h2>
+            <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--marketing-copy)]">
+              {featuredPost.description}
+            </p>
+            <div className="mt-6 flex items-center justify-between gap-4">
+              <p className="text-sm text-[var(--marketing-copy-soft)]">{featuredPost.readTime}</p>
+              <MarketingInlineLink href="#top">Read article</MarketingInlineLink>
+            </div>
+          </div>
+        </article>
+
+        <div className="grid gap-6">
+          {supportingPosts.map((post) => (
+            <article
+              key={post.title}
+              className="grid gap-4 rounded-[28px] border border-white/8 bg-[rgba(19,27,46,0.85)] p-5 md:grid-cols-[140px_minmax(0,1fr)]"
+            >
+              <img
+                alt={post.imageAlt}
+                className="h-32 w-full rounded-[20px] object-cover"
+                src={post.imageSrc}
+              />
+              <div>
+                <p className="text-xs tracking-[0.28em] text-[var(--marketing-gold)] uppercase">
+                  {post.category}
+                </p>
+                <h3 className="mt-3 font-heading text-2xl tracking-[-0.04em]">{post.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-[var(--marketing-copy)]">
+                  {post.description}
+                </p>
+                <p className="mt-4 text-sm text-[var(--marketing-copy-soft)]">{post.readTime}</p>
+              </div>
+            </article>
+          ))}
+
+          <div className="rounded-[28px] border border-[var(--marketing-gold)]/30 bg-[var(--marketing-gold)] px-6 py-7 text-[var(--marketing-gold-foreground)]">
+            <p className="text-sm tracking-[0.28em] uppercase opacity-70">Newsletter</p>
+            <h3 className="mt-3 font-heading text-2xl tracking-[-0.04em]">
+              Keep up with new notes and process writeups.
+            </h3>
+            <p className="mt-3 text-sm leading-7 opacity-80">
+              A lightweight field for now, styled from the Figma layout and ready for a real
+              newsletter integration later.
+            </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <Input
+                aria-label="Email address"
+                className="h-12 rounded-full border-[rgba(60,47,0,0.16)] bg-white/50 px-4 text-[var(--marketing-gold-foreground)] placeholder:text-[rgba(60,47,0,0.55)]"
+                placeholder="hello@company.com"
+              />
+              <Button className="h-12 rounded-full bg-[var(--marketing-ink)] px-5 text-[var(--marketing-gold)] hover:bg-[var(--marketing-ink)]/90">
+                Subscribe
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto mt-16 flex max-w-[1220px] items-center justify-center gap-3 px-4 sm:px-6 lg:px-12">
+        <PaginationChip label="Prev" />
+        <PaginationChip label="1" active />
+        <PaginationChip label="2" />
+        <PaginationChip label="3" />
+        <PaginationChip label="Next" />
+      </section>
+    </MarketingPageMain>
+  );
+}
+
+export function MarketingContactPage() {
+  return (
+    <MarketingPageMain>
+      <section className="mx-auto max-w-[1220px] px-4 pt-6 sm:px-6 lg:px-12">
+        <MarketingEyebrow>Get in Touch</MarketingEyebrow>
+        <h1 className="mt-3 max-w-4xl font-heading text-5xl leading-[0.94] tracking-[-0.07em] sm:text-6xl">
+          Let&apos;s chart your next technical breakthrough.
+        </h1>
+      </section>
+
+      <section className="mx-auto mt-16 grid max-w-[1220px] gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(320px,0.82fr)_minmax(0,1.18fr)] lg:px-12">
+        <div className="flex flex-col gap-8">
+          <div className="rounded-[32px] border border-white/8 bg-[rgba(19,27,46,0.85)] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.3)]">
+            <h2 className="font-heading text-3xl tracking-[-0.05em]">Our Studio</h2>
+            <div className="mt-6 flex flex-col gap-5 text-sm leading-7 text-[var(--marketing-copy)]">
+              <ContactInfoItem
+                label="Location"
+                value="Charlevoix, Michigan"
+                detail="Northern Michigan"
+                icon={<IconMapPin className="size-5" />}
+              />
+              <ContactInfoItem
+                label="Email"
+                value="hello@mikecebul.com"
+                detail="Placeholder contact address"
+                icon={<IconNotebook className="size-5" />}
+              />
+              <ContactInfoItem
+                label="Focus"
+                value="Websites, AV, automation"
+                detail="Practical systems for growing teams"
+                icon={<IconCpu className="size-5" />}
+              />
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-[32px] border border-white/8 bg-[rgba(19,27,46,0.85)]">
+            <img
+              alt="Charlevoix harbor at dusk"
+              className="h-[280px] w-full object-cover"
+              src={heroImageSrc}
+            />
+            <div className="border-t border-white/8 px-6 py-5">
+              <p className="text-sm tracking-[0.28em] text-[var(--marketing-gold)] uppercase">
+                Location
+              </p>
+              <p className="mt-2 text-base text-[var(--marketing-copy)]">Charlevoix, MI</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-[36px] border border-white/8 bg-[linear-gradient(180deg,rgba(19,27,46,0.98),rgba(12,18,33,0.98))] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.34)] sm:p-10">
+          <ContactForm />
+          <div className="mt-10 border-t border-white/8 pt-8">
+            <p className="font-heading text-xl tracking-[-0.04em]">
+              Thoughtful replies, grounded recommendations.
+            </p>
+            <p className="mt-3 text-sm leading-7 text-[var(--marketing-copy)]">
+              This first pass uses a validated placeholder handler, so the form is production-shaped
+              even before final lead delivery is connected.
+            </p>
+          </div>
+        </div>
+      </section>
+    </MarketingPageMain>
+  );
+}
+
+export function MarketingHybridMeetingSolutionsCaseStudyPage() {
+  return <MarketingCaseStudyPage caseStudy={caseStudies[0]} />;
+}
+
+export function MarketingWebsitesCaseStudyPage() {
+  return <MarketingCaseStudyPage caseStudy={caseStudies[1]} />;
+}
+
+function MarketingCaseStudyPage({ caseStudy }: { readonly caseStudy: CaseStudyData }) {
+  return (
+    <MarketingPageMain>
+      <section className="mx-auto max-w-[1220px] px-4 pt-6 sm:px-6 lg:px-12">
+        <MarketingEyebrow>{caseStudy.eyebrow}</MarketingEyebrow>
+        <h1 className="mt-3 max-w-5xl font-heading text-5xl leading-[0.94] tracking-[-0.07em] sm:text-6xl">
+          {caseStudy.title}
+        </h1>
+        <p className="mt-6 max-w-3xl text-base leading-8 text-[var(--marketing-copy)] sm:text-lg">
+          {caseStudy.intro}
+        </p>
+      </section>
+
+      <section className="mx-auto mt-16 grid max-w-[1220px] gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)] lg:px-12">
+        <div className="overflow-hidden rounded-[36px] border border-white/8 bg-[rgba(19,27,46,0.85)] shadow-[0_28px_80px_rgba(0,0,0,0.3)]">
+          <img
+            alt={caseStudy.gallery[0].imageAlt}
+            className="h-[420px] w-full object-cover"
+            src={caseStudy.gallery[0].imageSrc}
+          />
+        </div>
+        <div className="grid gap-4">
+          {caseStudy.metrics.map((metric) => (
+            <MarketingStatCard key={metric.label} label={metric.label} value={metric.value} />
+          ))}
+          <div className="rounded-[28px] border border-white/8 bg-[rgba(19,27,46,0.8)] p-6">
+            <p className="text-sm tracking-[0.28em] text-[var(--marketing-copy-soft)] uppercase">
+              Role
+            </p>
+            <p className="mt-3 text-sm leading-7 text-[var(--marketing-copy)]">{caseStudy.role}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto mt-16 grid max-w-[1220px] gap-4 px-4 sm:px-6 md:grid-cols-3 lg:px-12">
+        {caseStudy.summary.map((item) => (
+          <Card
+            key={item.title}
+            className="rounded-[28px] border border-white/8 bg-[rgba(19,27,46,0.84)] py-0 text-[var(--marketing-heading)] ring-0"
+          >
+            <CardHeader className="px-6 pt-6">
+              <CardTitle className="text-xl">{item.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="px-6 pb-6 text-sm leading-7 text-[var(--marketing-copy)]">
+              {item.body}
+            </CardContent>
+          </Card>
+        ))}
+      </section>
+
+      <section className="mx-auto mt-20 grid max-w-[1220px] gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:px-12">
+        <div className="space-y-6">
+          <div className="rounded-[32px] border border-white/8 bg-[rgba(19,27,46,0.82)] p-8">
+            <MarketingEyebrow>Challenge</MarketingEyebrow>
+            <p className="mt-4 text-base leading-8 text-[var(--marketing-copy)]">
+              {caseStudy.challenge}
+            </p>
+          </div>
+          <div className="rounded-[32px] border border-white/8 bg-[rgba(34,42,61,0.92)] p-8">
+            <MarketingEyebrow>Solution</MarketingEyebrow>
+            <p className="mt-4 text-base leading-8 text-[var(--marketing-copy)]">
+              {caseStudy.solution}
+            </p>
+          </div>
+        </div>
+        <div className="rounded-[32px] border border-white/8 bg-[rgba(19,27,46,0.82)] p-8">
+          <MarketingEyebrow>Results</MarketingEyebrow>
+          <div className="mt-6 grid gap-4">
+            {caseStudy.results.map((result) => (
+              <MarketingChecklistItem key={result}>{result}</MarketingChecklistItem>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto mt-20 max-w-[1220px] px-4 sm:px-6 lg:px-12">
+        <div className="grid gap-6 lg:grid-cols-3">
+          {caseStudy.gallery.map((item) => (
+            <article
+              key={item.title}
+              className="overflow-hidden rounded-[30px] border border-white/8 bg-[rgba(19,27,46,0.84)]"
+            >
+              <img alt={item.imageAlt} className="h-56 w-full object-cover" src={item.imageSrc} />
+              <div className="p-6">
+                <h3 className="font-heading text-2xl tracking-[-0.04em]">{item.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-[var(--marketing-copy)]">{item.body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto mt-20 max-w-[1024px] px-4 sm:px-6 lg:px-12">
+        <div className="rounded-[34px] border border-white/8 bg-[linear-gradient(155deg,rgba(34,42,61,1),rgba(19,27,46,1))] px-8 py-12 text-center shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:px-12">
+          <MarketingEyebrow>Next step</MarketingEyebrow>
+          <h2 className="mt-3 font-heading text-3xl tracking-[-0.05em] sm:text-4xl">
+            {caseStudy.ctaHeading}
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-[var(--marketing-copy)]">
+            {caseStudy.ctaBody}
+          </p>
+          <div className="mt-8">
+            <MarketingButtonLink to="/contact">Start a Conversation</MarketingButtonLink>
+          </div>
+        </div>
+      </section>
     </MarketingPageMain>
   );
 }
@@ -214,189 +579,211 @@ function MarketingPageMain({ children }: { readonly children: ReactNode }) {
   return <main className="pt-8 pb-24 sm:pt-10 lg:pt-14 lg:pb-32">{children}</main>;
 }
 
-function MarketingHero({ content }: { readonly content: HeroContent }) {
+function MarketingServicesOverview() {
   return (
-    <section className="mx-auto grid max-w-[1184px] gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.8fr)_minmax(320px,0.9fr)] lg:items-end lg:px-12">
-      <div className="flex flex-col gap-6 lg:gap-8">
-        <div className="space-y-4">
-          <p className="text-xs font-medium tracking-[0.35em] text-[var(--marketing-sky)] uppercase">
-            {content.eyebrow}
-          </p>
-          <div className="max-w-3xl space-y-4">
-            <h1 className="max-w-3xl font-heading text-5xl leading-[0.95] tracking-[-0.06em] text-balance sm:text-6xl lg:text-7xl">
-              Technical precision.
-              <span className="block text-[var(--marketing-gold)]">Northern Michigan soul.</span>
-            </h1>
-            <p className="max-w-2xl text-base leading-7 text-[var(--marketing-copy)] sm:text-lg">
-              I help local businesses navigate the digital landscape with automation, modern and
-              captivating websites, and seamless hybrid meeting solutions.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <MarketingButtonLink {...content.primaryCta} />
-          <MarketingButtonLink {...content.secondaryCta} />
-        </div>
-      </div>
-
-      <div className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[var(--marketing-panel)] p-3 shadow-[0_30px_80px_rgba(0,0,0,0.4)]">
-        <div className="absolute inset-x-0 top-0 h-40 bg-[linear-gradient(180deg,rgba(123,208,255,0.14),transparent)]" />
-        <div className="relative overflow-hidden rounded-[20px]">
-          <img
-            alt="Charlevoix lighthouse at dusk"
-            className="h-[320px] w-full object-cover sm:h-[360px] lg:h-[420px]"
-            src={heroImageSrc}
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(11,19,38,0.86),rgba(11,19,38,0.05))]" />
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 sm:p-6">
-            <div>
-              <p className="text-xs font-medium tracking-[0.35em] text-[var(--marketing-sky)] uppercase">
-                Independent operator
-              </p>
-              <p className="mt-2 font-heading text-2xl tracking-[-0.05em] text-[var(--marketing-heading)]">
-                Designed for sharp local brands
-              </p>
-            </div>
-            <div className="hidden rounded-full border border-[var(--marketing-gold)]/30 bg-[var(--marketing-panel-strong)]/80 px-4 py-2 text-sm font-medium text-[var(--marketing-gold)] sm:block">
-              Charlevoix, MI
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function MarketingServicesSection({
-  cardCtaHref,
-  content,
-}: {
-  readonly cardCtaHref: string;
-  readonly content: ServicesSectionContent;
-}) {
-  return (
-    <section
-      id="pricing"
-      className="mx-auto mt-20 flex max-w-[1280px] flex-col gap-8 px-4 sm:px-6 lg:mt-28 lg:px-12"
-    >
-      <div className="space-y-3">
-        <p className="text-sm tracking-[0.28em] text-[var(--marketing-copy-soft)] uppercase">
-          {content.eyebrow}
-        </p>
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-          <h2 className="font-heading text-3xl tracking-[-0.05em] text-[var(--marketing-heading)] sm:text-4xl">
-            {content.heading}
-          </h2>
-          <p className="max-w-xl text-sm leading-6 text-[var(--marketing-copy)] sm:text-base">
-            {sharedServicesSectionDescription}
-          </p>
-        </div>
-      </div>
-
-      <div
-        id="services"
-        className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)_minmax(0,1fr)]"
-      >
-        {serviceCards.map((serviceCard) => (
-          <ServiceCard key={serviceCard.title} card={serviceCard} ctaHref={cardCtaHref} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function MarketingAboutSection() {
-  return (
-    <section
-      id="about"
-      className="mx-auto mt-20 grid max-w-[1184px] gap-10 px-4 sm:px-6 lg:mt-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:px-12"
-    >
-      <div className="grid grid-cols-2 gap-4">
-        <div className="overflow-hidden rounded-[24px] border border-white/8 bg-[var(--marketing-panel)]">
-          <img
-            alt="A modern office with a chair and desk"
-            className="h-full min-h-[280px] w-full object-cover"
-            loading="lazy"
-            src={officeImageSrc}
-          />
-        </div>
-        <div className="pt-8">
-          <div className="overflow-hidden rounded-[24px] border border-white/8 bg-[var(--marketing-panel)]">
-            <img
-              alt="A glowing bar chart visualization"
-              className="h-full min-h-[280px] w-full object-cover"
-              loading="lazy"
-              src={dataVisualizationImageSrc}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-6">
+    <section className="mx-auto mt-20 max-w-[1220px] px-4 sm:px-6 lg:px-12">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-3">
-          <p className="text-sm tracking-[0.28em] text-[var(--marketing-copy-soft)] uppercase">
-            Why this works
-          </p>
-          <h2 className="max-w-lg font-heading text-3xl tracking-[-0.05em] text-[var(--marketing-heading)] sm:text-4xl">
-            Locally sourced, globally capable.
+          <MarketingEyebrow>Core Services</MarketingEyebrow>
+          <h2 className="font-heading text-3xl tracking-[-0.05em] sm:text-4xl">
+            Built for businesses that want momentum without noise.
           </h2>
         </div>
+      </div>
 
-        <div className="space-y-4">
-          {differentiators.map((differentiator, index) => (
+      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+        {marketingServices.map((service) => {
+          const Icon = getServiceIcon(service.headline);
+
+          return (
             <article
-              key={differentiator.title}
+              key={service.headline}
               className={cn(
-                "rounded-[22px] border border-white/6 bg-[var(--marketing-panel)] p-6",
-                index === 0 && "border-l-4 border-l-[var(--marketing-gold)]",
+                "relative flex h-full flex-col rounded-[32px] border border-white/8 bg-[rgba(19,27,46,0.86)] p-7 shadow-[0_22px_60px_rgba(0,0,0,0.28)]",
+                service.featured &&
+                  "border-[var(--marketing-gold)]/45 bg-[linear-gradient(180deg,rgba(34,42,61,0.98),rgba(19,27,46,0.98))]",
               )}
             >
-              <div className="mb-3 flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--marketing-panel-strong)] text-[var(--marketing-gold)]">
-                  <differentiator.icon className="size-5" />
+              {service.featured ? (
+                <div className="absolute top-6 right-6 rounded-full border border-[var(--marketing-gold)]/30 bg-[var(--marketing-gold)] px-3 py-1 text-[11px] font-semibold tracking-[0.24em] text-[var(--marketing-gold-foreground)] uppercase">
+                  Featured
                 </div>
-                <h3 className="font-heading text-xl tracking-[-0.04em] text-[var(--marketing-heading)]">
-                  {differentiator.title}
-                </h3>
+              ) : null}
+
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-[var(--marketing-panel-strong)] text-[var(--marketing-gold)]">
+                  <Icon className="size-6" />
+                </div>
+                <div className="text-right">
+                  <p className="text-xs tracking-[0.28em] text-[var(--marketing-sky)] uppercase">
+                    {service.eyebrow}
+                  </p>
+                  <div className="mt-3">
+                    <span className="font-heading text-3xl tracking-[-0.05em] text-[var(--marketing-gold)]">
+                      {service.price}
+                    </span>
+                    <span className="ml-2 text-sm text-[var(--marketing-copy)]">
+                      {service.priceSuffix}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <p className="max-w-xl text-sm leading-6 text-[var(--marketing-copy)] sm:text-base">
-                {differentiator.body}
-              </p>
+
+              <div className="mt-8">
+                <p className="text-sm font-medium text-[var(--marketing-heading)]">
+                  {service.headline}
+                </p>
+                <h3 className="mt-3 font-heading text-3xl leading-tight tracking-[-0.05em]">
+                  {service.title}
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-[var(--marketing-copy)]">
+                  {service.description}
+                </p>
+              </div>
+
+              <ul className="mt-6 flex flex-1 flex-col gap-3 text-sm text-[var(--marketing-heading)]">
+                {service.bullets.map((bullet) => (
+                  <li key={bullet} className="flex items-center gap-3">
+                    <span className="flex size-5 items-center justify-center rounded-full border border-[var(--marketing-gold)]/40 bg-[var(--marketing-gold)]/10 text-[var(--marketing-gold)]">
+                      <IconArrowRight className="size-3" />
+                    </span>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <MarketingButtonLink
+                className="mt-8 w-full justify-center"
+                tone="secondary"
+                to={
+                  service.headline === "Hybrid meeting solutions"
+                    ? "/case-studies/hybrid-meeting-solutions"
+                    : service.headline === "Marketing websites"
+                      ? "/case-studies/websites"
+                      : "/contact"
+                }
+              >
+                {service.headline === "AI & automation consulting"
+                  ? "Discuss the workflow"
+                  : "View case study"}
+              </MarketingButtonLink>
             </article>
-          ))}
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function MarketingLocalRootsSection() {
+  return (
+    <section className="mx-auto mt-20 grid max-w-[1220px] gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(320px,0.95fr)_minmax(0,1.05fr)] lg:items-center lg:px-12">
+      <div className="overflow-hidden rounded-[32px] border border-white/8 bg-[var(--marketing-panel)]">
+        <img
+          alt="Charlevoix harbor view"
+          className="h-[320px] w-full object-cover"
+          src={heroImageSrc}
+        />
+      </div>
+      <div className="space-y-5">
+        <MarketingEyebrow>Community</MarketingEyebrow>
+        <h2 className="font-heading text-3xl tracking-[-0.05em] sm:text-4xl">
+          Local Roots, Global Impact.
+        </h2>
+        <p className="max-w-2xl text-base leading-8 text-[var(--marketing-copy)]">
+          Being based in Charlevoix isn&apos;t just about the scenery. It&apos;s about the values of
+          a tight-knit community: accountability, personal follow-through, and work that still
+          matters after the presentation is over.
+        </p>
+        <div className="rounded-[20px] border border-white/8 bg-[rgba(19,27,46,0.82)] px-5 py-4">
+          <p className="font-heading text-xl">Charlevoix, MI</p>
+          <p className="mt-1 text-sm text-[var(--marketing-copy)]">45.3181° N, 85.2584° W</p>
         </div>
       </div>
     </section>
   );
 }
 
-function MarketingCtaSection({ content }: { readonly content: CtaSectionContent }) {
+function MarketingPreviewGrid() {
   return (
-    <section className="mx-auto mt-20 max-w-[1040px] px-4 sm:px-6 lg:mt-28 lg:px-12">
-      <div
-        id="cta"
-        className="relative overflow-hidden rounded-[32px] border border-white/8 bg-[linear-gradient(155deg,rgba(34,42,61,1),rgba(19,27,46,1))] px-6 py-12 shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:px-10 lg:px-16 lg:py-16"
+    <section className="mx-auto mt-20 grid max-w-[1220px] gap-6 px-4 sm:px-6 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)] lg:px-12">
+      <Link
+        className="group overflow-hidden rounded-[32px] border border-white/8 bg-[rgba(34,42,61,0.95)] p-8 transition-transform hover:-translate-y-1"
+        to="/blog"
       >
-        <div className="absolute -top-12 -right-20 size-56 rounded-full bg-[var(--marketing-gold)]/10 blur-3xl" />
-        <div className="relative flex flex-col items-center gap-6 text-center">
-          <div className="space-y-4">
-            <p className="text-sm tracking-[0.28em] text-[var(--marketing-copy-soft)] uppercase">
-              Next step
-            </p>
-            <h2 className="font-heading text-3xl tracking-[-0.05em] text-[var(--marketing-heading)] sm:text-4xl">
-              Ready to streamline your operations?
+        <div className="flex h-full flex-col justify-between gap-8">
+          <div>
+            <MarketingEyebrow>Journal</MarketingEyebrow>
+            <h2 className="mt-3 max-w-lg font-heading text-3xl tracking-[-0.05em] sm:text-4xl">
+              Latest Insights & Technical Deep Dives
             </h2>
-            <p className="mx-auto max-w-2xl text-sm leading-6 text-[var(--marketing-copy)] sm:text-base">
-              Let&apos;s discuss how we can lower your overhead and elevate your professional
-              presence in Northern Michigan.
+          </div>
+          <div className="flex items-end justify-between gap-4">
+            <p className="max-w-md text-sm leading-7 text-[var(--marketing-copy)]">
+              Exploring the frontier of AI integration, web systems, and implementation patterns
+              that keep real businesses moving.
             </p>
+            <IconArrowRight className="size-5 text-[var(--marketing-gold)] transition-transform group-hover:translate-x-1" />
           </div>
+        </div>
+      </Link>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <MarketingButtonLink {...content.primaryCta} />
-            <MarketingButtonLink {...content.secondaryCta} />
-          </div>
+      <Link
+        className="group rounded-[32px] border border-[var(--marketing-gold)]/40 bg-[var(--marketing-gold)] p-8 text-[var(--marketing-gold-foreground)] transition-transform hover:-translate-y-1"
+        to="/about"
+      >
+        <p className="text-sm tracking-[0.28em] uppercase opacity-70">The Process</p>
+        <h2 className="mt-4 font-heading text-3xl tracking-[-0.04em]">
+          Discover how the work gets shaped.
+        </h2>
+        <p className="mt-4 text-sm leading-7 opacity-80">
+          The about page explains the point of view behind the systems, the design language, and the
+          practical choices that drive the final build.
+        </p>
+        <div className="mt-8 inline-flex items-center rounded-full bg-[var(--marketing-ink)] px-4 py-2 text-sm font-semibold text-[var(--marketing-gold)]">
+          View About
+        </div>
+      </Link>
+    </section>
+  );
+}
+
+function MarketingPageHero({
+  body,
+  eyebrow,
+  title,
+}: {
+  readonly body: string;
+  readonly eyebrow: string;
+  readonly title: string;
+}) {
+  return (
+    <section className="mx-auto max-w-[1220px] px-4 pt-6 sm:px-6 lg:px-12">
+      <MarketingEyebrow>{eyebrow}</MarketingEyebrow>
+      <h1 className="mt-3 max-w-5xl font-heading text-5xl leading-[0.94] tracking-[-0.07em] sm:text-6xl">
+        {title}
+      </h1>
+      <p className="mt-6 max-w-3xl text-base leading-8 text-[var(--marketing-copy)] sm:text-lg">
+        {body}
+      </p>
+    </section>
+  );
+}
+
+function MarketingCtaSection() {
+  return (
+    <section className="mx-auto mt-20 max-w-[1024px] px-4 sm:px-6 lg:px-12">
+      <div className="rounded-[34px] border border-white/8 bg-[linear-gradient(155deg,rgba(34,42,61,1),rgba(19,27,46,1))] px-8 py-12 text-center shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:px-12">
+        <MarketingEyebrow>Next step</MarketingEyebrow>
+        <h2 className="mt-3 font-heading text-3xl tracking-[-0.05em] sm:text-4xl">
+          Ready to solve your next challenge?
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-[var(--marketing-copy)]">
+          Let&apos;s discuss how customized technical solutions can streamline your operations and
+          drive growth.
+        </p>
+        <div className="mt-8 flex justify-center">
+          <MarketingButtonLink to="/contact">Book a Free Consultation</MarketingButtonLink>
         </div>
       </div>
     </section>
@@ -404,11 +791,11 @@ function MarketingCtaSection({ content }: { readonly content: CtaSectionContent 
 }
 
 function MarketingNav({ pathname }: { readonly pathname: string }) {
-  const aboutHref = pathname === "/" ? "#about" : "/#about";
-  const consultationHref = pathname === "/services" ? "#cta" : "/services#cta";
+  const navigate = useNavigate();
+  const isCaseStudyRoute = pathname.startsWith("/case-studies");
 
   return (
-    <header className="sticky top-0 z-20 border-b border-white/6 bg-[rgba(11,19,38,0.72)] backdrop-blur-xl">
+    <header className="sticky top-0 z-20 border-b border-white/6 bg-[rgba(11,19,38,0.76)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-12">
         <Link
           className="font-heading text-xl tracking-[-0.06em] text-[var(--marketing-gold)]"
@@ -417,24 +804,55 @@ function MarketingNav({ pathname }: { readonly pathname: string }) {
           Mike Cebul
         </Link>
 
-        <nav className="flex flex-wrap items-center justify-center gap-5 text-sm text-[var(--marketing-copy)]">
+        <nav className="flex flex-wrap items-center justify-center gap-2 text-sm text-[var(--marketing-copy)]">
           <MarketingRouteLink active={pathname === "/"} label="Home" to="/" />
           <MarketingRouteLink active={pathname === "/services"} label="Services" to="/services" />
-          <a
-            className="border-b-2 border-transparent pb-1 transition-colors hover:text-[var(--marketing-heading)]"
-            href={aboutHref}
-          >
-            About
-          </a>
-          <a
-            className="border-b-2 border-transparent pb-1 transition-colors hover:text-[var(--marketing-heading)]"
-            href="#cta"
-          >
-            Contact
-          </a>
+          <MarketingRouteLink active={pathname === "/about"} label="About" to="/about" />
+          <MarketingRouteLink active={pathname === "/blog"} label="Blog" to="/blog" />
+          <MarketingRouteLink active={pathname === "/contact"} label="Contact" to="/contact" />
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "rounded-full px-3 text-[var(--marketing-copy)] hover:text-[var(--marketing-heading)]",
+                    isCaseStudyRoute &&
+                      "bg-white/6 text-[var(--marketing-gold)] hover:text-[var(--marketing-gold)]",
+                  )}
+                />
+              }
+            >
+              Case Studies
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="center"
+              className="w-64 rounded-2xl border border-white/10 bg-[var(--marketing-panel)] p-2 text-[var(--marketing-heading)]"
+            >
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Selected Work</DropdownMenuLabel>
+                {caseStudies.map((caseStudy) => (
+                  <DropdownMenuItem
+                    key={caseStudy.path}
+                    onClick={() => navigate({ to: caseStudy.path })}
+                  >
+                    <div className="flex flex-col">
+                      <span>{caseStudy.eyebrow}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {caseStudy.path.endsWith("websites")
+                          ? "Website system"
+                          : "Hybrid meeting room"}
+                      </span>
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
-        <MarketingButtonLink className="hidden sm:inline-flex" href={consultationHref}>
+        <MarketingButtonLink className="hidden sm:inline-flex" to="/contact">
           Book Consultation
         </MarketingButtonLink>
       </div>
@@ -449,13 +867,13 @@ function MarketingRouteLink({
 }: {
   readonly active: boolean;
   readonly label: string;
-  readonly to: "/" | "/services";
+  readonly to: MarketingPath;
 }) {
   return (
     <Link
       className={cn(
-        "border-b-2 border-transparent pb-1 transition-colors hover:text-[var(--marketing-heading)]",
-        active && "border-[var(--marketing-gold)] text-[var(--marketing-gold)]",
+        "rounded-full px-3 py-2 transition-colors hover:text-[var(--marketing-heading)]",
+        active && "bg-white/6 text-[var(--marketing-gold)]",
       )}
       to={to}
     >
@@ -464,82 +882,11 @@ function MarketingRouteLink({
   );
 }
 
-function ServiceCard({
-  card,
-  ctaHref,
-}: {
-  readonly card: ServiceCardData;
-  readonly ctaHref: string;
-}) {
-  return (
-    <article
-      className={cn(
-        "relative flex h-full flex-col rounded-[28px] border border-white/6 bg-[var(--marketing-panel)] p-6 shadow-[0_18px_48px_rgba(0,0,0,0.28)] lg:p-8",
-        card.featured &&
-          "border-[var(--marketing-gold)]/80 bg-[linear-gradient(180deg,rgba(34,42,61,0.98),rgba(19,27,46,0.98))] lg:-translate-y-4",
-      )}
-    >
-      {card.featured ? (
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--marketing-gold)]/30 bg-[var(--marketing-gold)] px-4 py-1 text-[11px] font-semibold tracking-[0.24em] text-[var(--marketing-gold-foreground)] uppercase shadow-lg">
-          Most Popular
-        </div>
-      ) : null}
-
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-[rgba(49,57,77,0.6)] text-[var(--marketing-gold)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-sm">
-          <card.icon className="size-7" />
-        </div>
-
-        <div className="text-right">
-          <p className="text-[11px] font-medium tracking-[0.24em] text-[var(--marketing-sky)] uppercase">
-            {card.eyebrow}
-          </p>
-          <div className="mt-3 flex items-end justify-end gap-2">
-            <span className="font-heading text-4xl tracking-[-0.06em] text-[var(--marketing-gold)]">
-              {card.price}
-            </span>
-            <span className="pb-1 text-sm text-[var(--marketing-copy)]">{card.priceSuffix}</span>
-          </div>
-          {card.note ? (
-            <p className="mt-1 text-sm text-[var(--marketing-copy)]">{card.note}</p>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="mt-10 space-y-4">
-        <h3 className="font-heading text-3xl leading-tight tracking-[-0.05em] text-[var(--marketing-heading)]">
-          {card.title}
-        </h3>
-        <div className="space-y-2 text-sm leading-6 text-[var(--marketing-copy)] sm:text-base">
-          {card.description.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-        </div>
-      </div>
-
-      <ul className="mt-8 flex flex-1 flex-col gap-3 text-sm text-[var(--marketing-heading)]">
-        {card.bullets.map((bullet) => (
-          <li key={bullet} className="flex items-center gap-3">
-            <span className="flex size-5 items-center justify-center rounded-full border border-[var(--marketing-gold)]/40 bg-[var(--marketing-gold)]/10 text-[var(--marketing-gold)]">
-              <IconCheck className="size-3.5" />
-            </span>
-            <span>{bullet}</span>
-          </li>
-        ))}
-      </ul>
-
-      <MarketingButtonLink className="mt-8 w-full justify-center" href={ctaHref} tone="secondary">
-        {card.ctaLabel}
-      </MarketingButtonLink>
-    </article>
-  );
-}
-
 type MarketingButtonLinkProps = {
   readonly children: ReactNode;
   readonly className?: string;
   readonly href?: string;
-  readonly to?: "/" | "/services";
+  readonly to?: MarketingPath;
   readonly tone?: "primary" | "secondary";
 };
 
@@ -557,7 +904,7 @@ function MarketingButtonLink({
       : "[--secondary:var(--marketing-panel-strong)] [--secondary-foreground:var(--marketing-gold)]";
   const buttonClassName = cn(
     buttonVariants({ size: "lg", variant }),
-    "h-12 rounded-xl border border-white/6 px-6 text-sm font-semibold shadow-[0_12px_32px_rgba(0,0,0,0.2)]",
+    "h-12 rounded-full border border-white/8 px-5 text-sm font-semibold shadow-[0_12px_32px_rgba(0,0,0,0.2)]",
     className,
   );
 
@@ -578,16 +925,112 @@ function MarketingButtonLink({
   );
 }
 
-function MarketingFooter() {
-  const routeFooterLinks = [
-    { label: "Home", to: "/" as const },
-    { label: "Services", to: "/services" as const },
-  ];
-  const anchorFooterLinks = [
-    { href: "/#about", label: "About" },
-    { href: "/services#cta", label: "Contact" },
-  ];
+function MarketingInlineLink({
+  children,
+  href,
+  to,
+}: {
+  readonly children: ReactNode;
+  readonly href?: string;
+  readonly to?: MarketingPath;
+}) {
+  const className =
+    "inline-flex items-center gap-2 text-sm font-semibold text-[var(--marketing-gold)] transition-transform hover:translate-x-1";
 
+  if (to) {
+    return (
+      <Link className={className} to={to}>
+        {children}
+        <IconArrowRight className="size-4" />
+      </Link>
+    );
+  }
+
+  return (
+    <a className={className} href={href}>
+      {children}
+      <IconArrowRight className="size-4" />
+    </a>
+  );
+}
+
+function MarketingEyebrow({ children }: { readonly children: ReactNode }) {
+  return (
+    <p className="text-xs font-medium tracking-[0.32em] text-[var(--marketing-sky)] uppercase">
+      {children}
+    </p>
+  );
+}
+
+function MarketingStatCard({ label, value }: { readonly label: string; readonly value: string }) {
+  return (
+    <div className="rounded-[20px] border border-white/8 bg-[rgba(19,27,46,0.82)] px-5 py-4">
+      <p className="text-xs tracking-[0.28em] text-[var(--marketing-copy-soft)] uppercase">
+        {label}
+      </p>
+      <p className="mt-2 font-heading text-lg tracking-[-0.03em] text-[var(--marketing-heading)]">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function MarketingChecklistItem({ children }: { readonly children: ReactNode }) {
+  return (
+    <div className="flex items-start gap-3 rounded-[22px] border border-white/8 bg-[rgba(19,27,46,0.76)] px-4 py-4">
+      <span className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-[var(--marketing-gold)]/12 text-[var(--marketing-gold)]">
+        <IconBolt className="size-4" />
+      </span>
+      <p className="text-sm leading-7 text-[var(--marketing-copy)]">{children}</p>
+    </div>
+  );
+}
+
+function ContactInfoItem({
+  detail,
+  icon,
+  label,
+  value,
+}: {
+  readonly detail: string;
+  readonly icon: ReactNode;
+  readonly label: string;
+  readonly value: string;
+}) {
+  return (
+    <div className="flex gap-4">
+      <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--marketing-panel-strong)] text-[var(--marketing-gold)]">
+        {icon}
+      </div>
+      <div>
+        <p className="text-sm font-medium text-[var(--marketing-heading)]">{label}</p>
+        <p className="mt-1 text-base text-[var(--marketing-copy)]">{value}</p>
+        <p className="text-sm text-[var(--marketing-copy-soft)]">{detail}</p>
+      </div>
+    </div>
+  );
+}
+
+function PaginationChip({
+  active = false,
+  label,
+}: {
+  readonly active?: boolean;
+  readonly label: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex h-10 min-w-10 items-center justify-center rounded-full border border-white/8 px-4 text-sm text-[var(--marketing-copy)]",
+        active && "border-[var(--marketing-gold)]/40 bg-white/6 text-[var(--marketing-gold)]",
+      )}
+    >
+      {label}
+    </div>
+  );
+}
+
+function MarketingFooter() {
   return (
     <footer className="border-t border-white/6 bg-[rgba(7,16,31,0.96)]">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-8 px-4 py-12 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-12">
@@ -601,26 +1044,46 @@ function MarketingFooter() {
         </div>
 
         <div className="flex flex-wrap gap-5 text-sm text-[var(--marketing-copy)]">
-          {routeFooterLinks.map((footerLink) => (
-            <Link
-              key={footerLink.label}
-              className="transition-colors hover:text-[var(--marketing-heading)]"
-              to={footerLink.to}
-            >
-              {footerLink.label}
-            </Link>
-          ))}
-          {anchorFooterLinks.map((footerLink) => (
-            <a
-              key={footerLink.label}
-              className="transition-colors hover:text-[var(--marketing-heading)]"
-              href={footerLink.href}
-            >
-              {footerLink.label}
-            </a>
-          ))}
+          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/">
+            Home
+          </Link>
+          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/services">
+            Services
+          </Link>
+          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/about">
+            About
+          </Link>
+          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/blog">
+            Blog
+          </Link>
+          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/contact">
+            Contact
+          </Link>
+          <Link
+            className="transition-colors hover:text-[var(--marketing-heading)]"
+            to="/case-studies/hybrid-meeting-solutions"
+          >
+            Hybrid Meeting Case Study
+          </Link>
+          <Link
+            className="transition-colors hover:text-[var(--marketing-heading)]"
+            to="/case-studies/websites"
+          >
+            Website Case Study
+          </Link>
         </div>
       </div>
     </footer>
   );
+}
+
+function getServiceIcon(headline: string) {
+  switch (headline) {
+    case "AI & automation consulting":
+      return serviceIconMap["AI & automation consulting"];
+    case "Hybrid meeting solutions":
+      return serviceIconMap["Hybrid meeting solutions"];
+    default:
+      return serviceIconMap["Marketing websites"];
+  }
 }

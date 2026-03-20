@@ -14,11 +14,17 @@ import { Route as GuestRouteRouteImport } from './routes/_guest/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
 import { Route as MarketingServicesRouteImport } from './routes/_marketing/services'
+import { Route as MarketingContactRouteImport } from './routes/_marketing/contact'
+import { Route as MarketingBlogRouteImport } from './routes/_marketing/blog'
+import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
 import { Route as GuestSignupRouteImport } from './routes/_guest/signup'
 import { Route as GuestLoginRouteImport } from './routes/_guest/login'
+import { Route as MarketingCaseStudiesRouteRouteImport } from './routes/_marketing/case-studies/route'
 import { Route as AuthAppRouteRouteImport } from './routes/_auth/app/route'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as MarketingCaseStudiesWebsitesRouteImport } from './routes/_marketing/case-studies/websites'
+import { Route as MarketingCaseStudiesHybridMeetingSolutionsRouteImport } from './routes/_marketing/case-studies/hybrid-meeting-solutions'
 
 const MarketingRouteRoute = MarketingRouteRouteImport.update({
   id: '/_marketing',
@@ -42,6 +48,21 @@ const MarketingServicesRoute = MarketingServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
+const MarketingContactRoute = MarketingContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingBlogRoute = MarketingBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingAboutRoute = MarketingAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
 const GuestSignupRoute = GuestSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -52,6 +73,12 @@ const GuestLoginRoute = GuestLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => GuestRouteRoute,
 } as any)
+const MarketingCaseStudiesRouteRoute =
+  MarketingCaseStudiesRouteRouteImport.update({
+    id: '/case-studies',
+    path: '/case-studies',
+    getParentRoute: () => MarketingRouteRoute,
+  } as any)
 const AuthAppRouteRoute = AuthAppRouteRouteImport.update({
   id: '/app',
   path: '/app',
@@ -67,21 +94,45 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketingCaseStudiesWebsitesRoute =
+  MarketingCaseStudiesWebsitesRouteImport.update({
+    id: '/websites',
+    path: '/websites',
+    getParentRoute: () => MarketingCaseStudiesRouteRoute,
+  } as any)
+const MarketingCaseStudiesHybridMeetingSolutionsRoute =
+  MarketingCaseStudiesHybridMeetingSolutionsRouteImport.update({
+    id: '/hybrid-meeting-solutions',
+    path: '/hybrid-meeting-solutions',
+    getParentRoute: () => MarketingCaseStudiesRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
   '/app': typeof AuthAppRouteRouteWithChildren
+  '/case-studies': typeof MarketingCaseStudiesRouteRouteWithChildren
   '/login': typeof GuestLoginRoute
   '/signup': typeof GuestSignupRoute
+  '/about': typeof MarketingAboutRoute
+  '/blog': typeof MarketingBlogRoute
+  '/contact': typeof MarketingContactRoute
   '/services': typeof MarketingServicesRoute
+  '/case-studies/hybrid-meeting-solutions': typeof MarketingCaseStudiesHybridMeetingSolutionsRoute
+  '/case-studies/websites': typeof MarketingCaseStudiesWebsitesRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app/': typeof AuthAppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MarketingIndexRoute
+  '/case-studies': typeof MarketingCaseStudiesRouteRouteWithChildren
   '/login': typeof GuestLoginRoute
   '/signup': typeof GuestSignupRoute
+  '/about': typeof MarketingAboutRoute
+  '/blog': typeof MarketingBlogRoute
+  '/contact': typeof MarketingContactRoute
   '/services': typeof MarketingServicesRoute
+  '/case-studies/hybrid-meeting-solutions': typeof MarketingCaseStudiesHybridMeetingSolutionsRoute
+  '/case-studies/websites': typeof MarketingCaseStudiesWebsitesRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/app': typeof AuthAppIndexRoute
 }
@@ -91,10 +142,16 @@ export interface FileRoutesById {
   '/_guest': typeof GuestRouteRouteWithChildren
   '/_marketing': typeof MarketingRouteRouteWithChildren
   '/_auth/app': typeof AuthAppRouteRouteWithChildren
+  '/_marketing/case-studies': typeof MarketingCaseStudiesRouteRouteWithChildren
   '/_guest/login': typeof GuestLoginRoute
   '/_guest/signup': typeof GuestSignupRoute
+  '/_marketing/about': typeof MarketingAboutRoute
+  '/_marketing/blog': typeof MarketingBlogRoute
+  '/_marketing/contact': typeof MarketingContactRoute
   '/_marketing/services': typeof MarketingServicesRoute
   '/_marketing/': typeof MarketingIndexRoute
+  '/_marketing/case-studies/hybrid-meeting-solutions': typeof MarketingCaseStudiesHybridMeetingSolutionsRoute
+  '/_marketing/case-studies/websites': typeof MarketingCaseStudiesWebsitesRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/app/': typeof AuthAppIndexRoute
 }
@@ -103,23 +160,47 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/case-studies'
     | '/login'
     | '/signup'
+    | '/about'
+    | '/blog'
+    | '/contact'
     | '/services'
+    | '/case-studies/hybrid-meeting-solutions'
+    | '/case-studies/websites'
     | '/api/auth/$'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/services' | '/api/auth/$' | '/app'
+  to:
+    | '/'
+    | '/case-studies'
+    | '/login'
+    | '/signup'
+    | '/about'
+    | '/blog'
+    | '/contact'
+    | '/services'
+    | '/case-studies/hybrid-meeting-solutions'
+    | '/case-studies/websites'
+    | '/api/auth/$'
+    | '/app'
   id:
     | '__root__'
     | '/_auth'
     | '/_guest'
     | '/_marketing'
     | '/_auth/app'
+    | '/_marketing/case-studies'
     | '/_guest/login'
     | '/_guest/signup'
+    | '/_marketing/about'
+    | '/_marketing/blog'
+    | '/_marketing/contact'
     | '/_marketing/services'
     | '/_marketing/'
+    | '/_marketing/case-studies/hybrid-meeting-solutions'
+    | '/_marketing/case-studies/websites'
     | '/api/auth/$'
     | '/_auth/app/'
   fileRoutesById: FileRoutesById
@@ -168,6 +249,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingServicesRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
+    '/_marketing/contact': {
+      id: '/_marketing/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof MarketingContactRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/blog': {
+      id: '/_marketing/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof MarketingBlogRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/about': {
+      id: '/_marketing/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof MarketingAboutRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
     '/_guest/signup': {
       id: '/_guest/signup'
       path: '/signup'
@@ -181,6 +283,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof GuestLoginRouteImport
       parentRoute: typeof GuestRouteRoute
+    }
+    '/_marketing/case-studies': {
+      id: '/_marketing/case-studies'
+      path: '/case-studies'
+      fullPath: '/case-studies'
+      preLoaderRoute: typeof MarketingCaseStudiesRouteRouteImport
+      parentRoute: typeof MarketingRouteRoute
     }
     '/_auth/app': {
       id: '/_auth/app'
@@ -202,6 +311,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_marketing/case-studies/websites': {
+      id: '/_marketing/case-studies/websites'
+      path: '/websites'
+      fullPath: '/case-studies/websites'
+      preLoaderRoute: typeof MarketingCaseStudiesWebsitesRouteImport
+      parentRoute: typeof MarketingCaseStudiesRouteRoute
+    }
+    '/_marketing/case-studies/hybrid-meeting-solutions': {
+      id: '/_marketing/case-studies/hybrid-meeting-solutions'
+      path: '/hybrid-meeting-solutions'
+      fullPath: '/case-studies/hybrid-meeting-solutions'
+      preLoaderRoute: typeof MarketingCaseStudiesHybridMeetingSolutionsRouteImport
+      parentRoute: typeof MarketingCaseStudiesRouteRoute
     }
   }
 }
@@ -244,12 +367,37 @@ const GuestRouteRouteWithChildren = GuestRouteRoute._addFileChildren(
   GuestRouteRouteChildren,
 )
 
+interface MarketingCaseStudiesRouteRouteChildren {
+  MarketingCaseStudiesHybridMeetingSolutionsRoute: typeof MarketingCaseStudiesHybridMeetingSolutionsRoute
+  MarketingCaseStudiesWebsitesRoute: typeof MarketingCaseStudiesWebsitesRoute
+}
+
+const MarketingCaseStudiesRouteRouteChildren: MarketingCaseStudiesRouteRouteChildren =
+  {
+    MarketingCaseStudiesHybridMeetingSolutionsRoute:
+      MarketingCaseStudiesHybridMeetingSolutionsRoute,
+    MarketingCaseStudiesWebsitesRoute: MarketingCaseStudiesWebsitesRoute,
+  }
+
+const MarketingCaseStudiesRouteRouteWithChildren =
+  MarketingCaseStudiesRouteRoute._addFileChildren(
+    MarketingCaseStudiesRouteRouteChildren,
+  )
+
 interface MarketingRouteRouteChildren {
+  MarketingCaseStudiesRouteRoute: typeof MarketingCaseStudiesRouteRouteWithChildren
+  MarketingAboutRoute: typeof MarketingAboutRoute
+  MarketingBlogRoute: typeof MarketingBlogRoute
+  MarketingContactRoute: typeof MarketingContactRoute
   MarketingServicesRoute: typeof MarketingServicesRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
 }
 
 const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
+  MarketingCaseStudiesRouteRoute: MarketingCaseStudiesRouteRouteWithChildren,
+  MarketingAboutRoute: MarketingAboutRoute,
+  MarketingBlogRoute: MarketingBlogRoute,
+  MarketingContactRoute: MarketingContactRoute,
   MarketingServicesRoute: MarketingServicesRoute,
   MarketingIndexRoute: MarketingIndexRoute,
 }
