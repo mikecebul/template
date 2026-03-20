@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { MarketingPage } from "@/components/marketing-page";
+import { MarketingServicesPage } from "@/components/marketing-page";
 
-export const Route = createFileRoute("/services")({
-  component: ServicesPage,
+export const Route = createFileRoute("/_marketing/services")({
+  component: MarketingServicesRoute,
   head: () => ({
     meta: [
       {
@@ -18,6 +18,6 @@ export const Route = createFileRoute("/services")({
   }),
 });
 
-function ServicesPage() {
-  return <MarketingPage page="services" />;
+function MarketingServicesRoute() {
+  return <MarketingServicesPage />;
 }
