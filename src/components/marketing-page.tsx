@@ -63,18 +63,18 @@ export function MarketingLayout() {
 export function MarketingHomePage() {
   return (
     <MarketingPageMain>
-      <section className="mx-auto grid max-w-[1220px] gap-8 px-4 pt-6 sm:px-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.85fr)] lg:items-center lg:px-12">
+      <section className="mx-auto grid max-w-[1220px] gap-8 px-4 pt-6 sm:px-6 lg:grid-cols-[minmax(0,1.16fr)_minmax(320px,0.84fr)] lg:items-center lg:px-12">
         <div className="flex flex-col gap-6">
-          <MarketingEyebrow>Charlevoix, Michigan</MarketingEyebrow>
-          <div className="max-w-3xl space-y-4">
-            <h1 className="font-heading text-5xl leading-[0.92] tracking-[-0.07em] text-balance sm:text-6xl lg:text-7xl">
-              Elevating
-              <span className="block text-[var(--marketing-gold)]">Precision</span>
-              <span className="block">through Technology.</span>
+          <MarketingEyebrow>Independent technology services</MarketingEyebrow>
+          <div className="max-w-[46rem] space-y-5">
+            <h1 className="max-w-[10.5ch] font-heading text-5xl tracking-[-0.08em] text-balance sm:text-[4.35rem] lg:text-[5.6rem]">
+              Elevate Your
+              <span className="block text-[var(--marketing-gold)]">Business</span>
+              <span className="block">with Technology.</span>
             </h1>
-            <p className="max-w-2xl text-base leading-7 text-[var(--marketing-copy)] sm:text-lg">
-              Mike Cebulski is a technical consultant bridging the gap between hardware, automation,
-              and high-performance web systems.
+            <p className="max-w-xl text-base leading-7 text-[var(--marketing-copy)] sm:text-lg">
+              Mike Cebulski provides hands-on technical services across web systems, automation, AV,
+              and hardware integration for businesses throughout Northern Michigan.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -93,19 +93,15 @@ export function MarketingHomePage() {
               className="h-[420px] w-full object-cover"
               src={heroImageSrc}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,19,38,0.08),rgba(11,19,38,0.82))]" />
-            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-6 p-6">
-              <div>
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,19,38,0.04),rgba(11,19,38,0.56)_72%,rgba(11,19,38,0.8))]" />
+            <div className="absolute inset-x-0 bottom-0 p-6">
+              <div className="max-w-sm rounded-[24px] border border-white/10 bg-[rgba(9,16,31,0.6)] px-5 py-4 backdrop-blur-md">
                 <p className="text-xs font-medium tracking-[0.3em] text-[var(--marketing-sky)] uppercase">
-                  Independent consultant
+                  Serving Northern Michigan
                 </p>
-                <p className="mt-2 max-w-xs font-heading text-2xl tracking-[-0.05em] text-[var(--marketing-heading)]">
-                  Technical direction with a local, hands-on approach.
+                <p className="mt-2 font-heading text-xl tracking-[-0.04em] text-[var(--marketing-heading)]">
+                  Hands-on support for regional businesses.
                 </p>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <MarketingStatCard label="Focus" value="Web, AV, automation" />
-                <MarketingStatCard label="Based in" value="Charlevoix, MI" />
               </div>
             </div>
           </div>
