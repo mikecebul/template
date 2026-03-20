@@ -1,18 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { IntroPageDeleteMe } from "@/components/_DELETE_ME_intro_page";
+import { MarketingPage } from "@/components/marketing-page";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      {
+        title: "Mike Cebul | Northern Michigan Technical Consulting",
+      },
+      {
+        name: "description",
+        content:
+          "Technical consulting, marketing websites, and automation support for Northern Michigan businesses that want modern systems with a human touch.",
+      },
+    ],
+  }),
   component: HomePage,
 });
 
 function HomePage() {
-  /**
-   * This is the intro component for TanStarter,
-   * which you may delete after creating the project,
-   * and replace it with your own homepage or landing page.
-   *
-   * Have fun!
-   */
-  return <IntroPageDeleteMe />;
+  return <MarketingPage page="home" />;
 }

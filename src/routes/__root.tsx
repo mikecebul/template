@@ -30,11 +30,12 @@ export const Route = createRootRouteWithContext<{
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "template",
+        title: "Mike Cebul",
       },
       {
         name: "description",
-        content: "A TanStack Start project scaffolded with create-mugnavo.",
+        content:
+          "Technical consulting, modern websites, and automation systems built for Northern Michigan businesses.",
       },
     ],
     links: [
