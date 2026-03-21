@@ -27,10 +27,11 @@ pnpm create mugnavo
 
 2. Create a `.env` file based on [`.env.example`](./.env.example).
 
-3. Push the schema to your database with drizzle-kit:
+3. Generate and apply the initial database migration:
 
    ```bash
-   pnpm db push
+   pnpm db:generate
+   pnpm db:migrate
    ```
 
    https://orm.drizzle.team/docs/migrations
@@ -57,13 +58,70 @@ For non-development environments, set `CONTACT_FROM_EMAIL` and `RESEND_API_KEY` 
 
 ## Deploying to production
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/66acdee6-8e42-436f-9943-a67cad998f63/deploy-status)](https://app.netlify.com/projects/mugnavo-tanstarter/deploys)
+This repo now includes a production `Dockerfile` and a GitHub Actions workflow at [`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) that:
 
-The [vite config](./vite.config.ts#L12-L13) is currently configured to use Nitro to deploy on Netlify, but supports many other [deployment presets](https://nitro.build/deploy) like Vercel and Node.
+- builds the app image without injecting app secrets at build time
+- pushes the image to Docker Hub as `latest` and a commit SHA tag
+- triggers a Dokploy redeploy through `DOKPLOY_DEPLOY_HOOK`
 
-While Nitro provides a great multi-provider default, the official [@netlify/vite-plugin-tanstack-start](https://npmx.dev/package/@netlify/vite-plugin-tanstack-start) is also available for Netlify deployments.
+Set these GitHub Secrets before enabling the workflow:
 
-Refer to the [TanStack Start hosting docs](https://tanstack.com/start/latest/docs/framework/react/guide/hosting) for deploying to other platforms.
+- `DOCKERHUB_USERNAME`
+- `DOCKERHUB_TOKEN`
+- `DOKPLOY_DEPLOY_HOOK`
+
+Set these runtime environment variables in Dokploy:
+
+- `APP_BASE_URL`
+- `DATABASE_URL`
+- `BETTER_AUTH_SECRET`
+- `CONTACT_TO_EMAIL`
+- `CONTACT_FROM_EMAIL`
+- `RESEND_API_KEY`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `HOST=0.0.0.0`
+- `PORT=3000`
+
+For database changes, run migrations as a separate Dokploy task using the same image:
+
+```bash
+pnpm db:migrate:prod
+```
+
+That command uses the committed SQL files in [`drizzle`](./drizzle) and reads `DATABASE_URL` only at runtime.
+
+For local Docker-based testing, the default Postgres database name is `mikecebul_website`.
+
+## Local Docker testing
+
+The fastest local smoke test is:
+
+```bash
+docker build -t template-dokploy-test .
+docker compose up -d db
+docker compose exec db psql -U postgres -c 'CREATE DATABASE mikecebul_website_test;'
+docker run --rm \
+  -e DATABASE_URL=postgresql://postgres:password@host.docker.internal:5432/mikecebul_website_test \
+  template-dokploy-test \
+  pnpm db:migrate:prod
+docker run --rm -p 3000:3000 \
+  -e APP_BASE_URL=http://localhost:3000 \
+  -e DATABASE_URL=postgresql://postgres:password@host.docker.internal:5432/mikecebul_website_test \
+  -e BETTER_AUTH_SECRET=test-secret \
+  -e CONTACT_TO_EMAIL=test@example.com \
+  template-dokploy-test
+```
+
+Then open [http://localhost:3000](http://localhost:3000) or run:
+
+```bash
+curl -I http://localhost:3000
+```
+
+For the full Docker, migration, and CI testing workflow, see [`docs/docker.md`](./docs/docker.md).
 
 ## Issue watchlist
 

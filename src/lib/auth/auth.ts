@@ -8,7 +8,7 @@ import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
 export const auth = betterAuth({
-  baseURL: env.VITE_BASE_URL,
+  baseURL: env.APP_BASE_URL,
   telemetry: {
     enabled: false,
   },

@@ -14,7 +14,7 @@ const emptyStringAsUndefined = (value: unknown) => {
 export const env = createEnv({
   server: {
     DATABASE_URL: z.url(),
-    VITE_BASE_URL: z.url().default("http://localhost:3000"),
+    APP_BASE_URL: z.url().default("http://localhost:3000"),
     BETTER_AUTH_SECRET: z.string().min(1),
     CONTACT_TO_EMAIL: z.preprocess(emptyStringAsUndefined, z.email().default("me@mikecebul.com")),
     CONTACT_FROM_EMAIL: z.preprocess(emptyStringAsUndefined, z.string().optional()),
