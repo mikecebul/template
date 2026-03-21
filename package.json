@@ -65,7 +65,7 @@
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@rolldown/plugin-babel": "^0.2.2",
-    "@tailwindcss/vite": "^4.2.2",
+    "@tailwindcss/vite": "4.2.2",
     "@tanstack/devtools-a11y": "^0.1.2",
     "@tanstack/devtools-vite": "^0.6.0",
     "@tanstack/eslint-plugin-query": "^5.94.5",
