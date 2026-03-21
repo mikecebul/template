@@ -43,6 +43,18 @@ pnpm create mugnavo
 
    The development server should now be running at [http://localhost:3000](http://localhost:3000).
 
+## Local email with Mailpit
+
+Start the local services with Docker Compose:
+
+```bash
+docker-compose up -d
+```
+
+In development, the contact form delivers email to Mailpit over SMTP on port `1025`.
+Open [http://localhost:8025](http://localhost:8025) to review captured messages.
+For non-development environments, set `CONTACT_FROM_EMAIL` and `RESEND_API_KEY` in your environment.
+
 ## Deploying to production
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/66acdee6-8e42-436f-9943-a67cad998f63/deploy-status)](https://app.netlify.com/projects/mugnavo-tanstarter/deploys)

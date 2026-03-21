@@ -33,10 +33,15 @@ export type ContactFormValues = z.infer<typeof contactFormSchema>;
 export const $submitContact = createServerFn({ method: "POST" })
   .inputValidator(contactFormSchema)
   .handler(async ({ data }) => {
-    await Promise.resolve(data);
+    const subject = `New contact inquiry: ${data.inquiryType} from ${data.name}`;
+    const { sendContactInquiryEmail } = await import("@/lib/contact-email.server");
+
+    await sendContactInquiryEmail({
+      data,
+      subject,
+    });
 
     return {
-      message:
-        "Thanks for reaching out. This placeholder handler validated your message successfully.",
+      message: "Thanks for reaching out. Your inquiry was sent successfully.",
     };
   });
