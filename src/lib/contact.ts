@@ -9,16 +9,21 @@ export const inquiryTypes = [
 ] as const;
 
 export const contactFormSchema = z.object({
-  email: z.email("Enter a valid email address."),
+  email: z
+    .string()
+    .trim()
+    .refine((value) => z.email().safeParse(value).success, "Enter a valid email address."),
   inquiryType: z.enum(inquiryTypes, {
     message: "Choose the type of inquiry that fits best.",
   }),
   message: z
     .string()
-    .min(20, "Share a little more detail so I can understand the project.")
+    .trim()
+    .min(10, "Share a little more detail so I can understand the project.")
     .max(800, "Keep the message under 800 characters."),
   name: z
     .string()
+    .trim()
     .min(2, "Please enter your full name.")
     .max(80, "Please keep your name under 80 characters."),
 });

@@ -89,15 +89,15 @@ export const servicePrinciples = [
 
 export const aboutHighlights = [
   {
-    body: "I work at the intersection of software, systems design, and the physical environments where teams meet.",
+    body: "My work brings together elegant design, thoughtful user experience, software development, and hardware management.",
     title: "Technical range",
   },
   {
-    body: "Northern Michigan roots shape the way I work: direct communication, careful follow-through, and local accountability.",
+    body: "I want to bring modern technical expertise to Northern Michigan in a way that still feels personal, grounded, and local.",
     title: "Local perspective",
   },
   {
-    body: "Projects are designed to feel composed on day one and manageable six months later.",
+    body: "Projects are designed to feel polished on day one and manageable six months later.",
     title: "Long-term thinking",
   },
 ];

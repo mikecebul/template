@@ -12,6 +12,13 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    watch:
+      process.env.VITE_USE_POLLING === "1"
+        ? {
+            interval: 1000,
+            usePolling: true,
+          }
+        : undefined,
   },
   plugins: [
     devtools(),

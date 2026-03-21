@@ -61,7 +61,13 @@ function FieldDescription({ className, ...props }: ComponentProps<"p">) {
   );
 }
 
-function FieldError({ className, errors }: { className?: string; errors: unknown }) {
+function FieldError({
+  className,
+  errors,
+  ...props
+}: ComponentProps<"div"> & {
+  errors: unknown;
+}) {
   const messages = getErrorMessages(errors);
 
   if (!messages.length) {
@@ -69,7 +75,12 @@ function FieldError({ className, errors }: { className?: string; errors: unknown
   }
 
   return (
-    <div data-slot="field-error" className={cn("text-sm leading-6 text-destructive", className)}>
+    <div
+      data-slot="field-error"
+      aria-live="polite"
+      className={cn("text-sm leading-6 text-destructive", className)}
+      {...props}
+    >
       {messages.map((message) => (
         <p key={message}>{message}</p>
       ))}
@@ -120,7 +131,7 @@ function getErrorMessages(errors: unknown): string[] {
     return [];
   }
 
-  return errors
+  const messages = errors
     .map((error) => {
       if (typeof error === "string") {
         return error;
@@ -134,6 +145,8 @@ function getErrorMessages(errors: unknown): string[] {
       return null;
     })
     .filter((message): message is string => Boolean(message));
+
+  return [...new Set(messages)];
 }
 
 export {
