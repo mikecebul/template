@@ -10,7 +10,7 @@ pnpm create mugnavo
 - TanStack [Start](https://tanstack.com/start/latest) + [Router](https://tanstack.com/router/latest) + [Query](https://tanstack.com/query/latest)
 - [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) + [Base UI](https://base-ui.com/) (base-maia) + [Remix Icon](https://remixicon.com/)
 - [Vite 8](https://vite.dev) + [Nitro v3](https://nitro.build/)
-- [Drizzle ORM](https://orm.drizzle.team/) + PostgreSQL
+- [Drizzle ORM](https://orm.drizzle.team/) + SQLite
 - [Better Auth](https://www.better-auth.com/)
 - [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) + [Oxfmt](https://oxc.rs/docs/guide/usage/formatter.html)
 
@@ -27,10 +27,9 @@ pnpm create mugnavo
 
 2. Create a `.env` file based on [`.env.example`](./.env.example).
 
-3. Generate and apply the initial database migration:
+3. Apply the committed database migration:
 
    ```bash
-   pnpm db:generate
    pnpm db:migrate
    ```
 
@@ -46,10 +45,10 @@ pnpm create mugnavo
 
 ## Local email with Mailpit
 
-Start the local services with Docker Compose:
+Start Mailpit with Docker Compose:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 In development, the contact form delivers email to Mailpit over SMTP on port `1025`.
@@ -85,6 +84,8 @@ Set these runtime environment variables in Dokploy:
 - `HOST=0.0.0.0`
 - `PORT=3000`
 
+Set `DATABASE_URL` to a volume-backed SQLite path such as `file:/data/app.db` and mount `/data` in Dokploy so the database survives redeploys and can be backed up.
+
 For database changes, run migrations as a separate Dokploy task using the same image:
 
 ```bash
@@ -93,7 +94,7 @@ pnpm db:migrate:prod
 
 That command uses the committed SQL files in [`drizzle`](./drizzle) and reads `DATABASE_URL` only at runtime.
 
-For local Docker-based testing, the default Postgres database name is `mikecebul_website`.
+For local development, a common default is `DATABASE_URL=file:./local.db`.
 
 ## Local Docker testing
 
@@ -101,15 +102,16 @@ The fastest local smoke test is:
 
 ```bash
 docker build -t template-dokploy-test .
-docker compose up -d db
-docker compose exec db psql -U postgres -c 'CREATE DATABASE mikecebul_website_test;'
+mkdir -p .docker-data
 docker run --rm \
-  -e DATABASE_URL=postgresql://postgres:password@host.docker.internal:5432/mikecebul_website_test \
+  -v "$(pwd)/.docker-data:/data" \
+  -e DATABASE_URL=file:/data/app.db \
   template-dokploy-test \
   pnpm db:migrate:prod
 docker run --rm -p 3000:3000 \
+  -v "$(pwd)/.docker-data:/data" \
   -e APP_BASE_URL=http://localhost:3000 \
-  -e DATABASE_URL=postgresql://postgres:password@host.docker.internal:5432/mikecebul_website_test \
+  -e DATABASE_URL=file:/data/app.db \
   -e BETTER_AUTH_SECRET=test-secret \
   -e CONTACT_TO_EMAIL=test@example.com \
   template-dokploy-test
@@ -139,7 +141,7 @@ We use [Husky](https://typicode.github.io/husky/) to run git hooks with the foll
 
 #### Scripts
 
-We use **pnpm** by default, but you can modify these scripts in [package.json](./package.json) to use your preferred package manager.
+This repo is configured for **pnpm**.
 
 - **`auth:generate`** - Regenerate the [auth db schema](./src/lib/db/schema/auth.schema.ts) if you've made changes to your Better Auth [config](./src/lib/auth/auth.ts).
 - **`db`** - Run [drizzle-kit](https://orm.drizzle.team/docs/kit-overview) commands. (e.g. `pnpm db generate`, `pnpm db studio`)

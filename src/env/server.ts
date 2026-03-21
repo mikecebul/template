@@ -1,6 +1,8 @@
 import { createEnv } from "@t3-oss/env-core";
 import * as z from "zod";
 
+const supportedDatabaseProtocols = new Set(["file:", "http:", "https:", "libsql:", "ws:", "wss:"]);
+
 const emptyStringAsUndefined = (value: unknown) => {
   if (typeof value !== "string") {
     return value;
@@ -11,9 +13,17 @@ const emptyStringAsUndefined = (value: unknown) => {
   return trimmedValue === "" ? undefined : trimmedValue;
 };
 
+const databaseUrlSchema = z.url().refine((value) => {
+  try {
+    return supportedDatabaseProtocols.has(new URL(value).protocol);
+  } catch {
+    return false;
+  }
+}, 'DATABASE_URL must use a libSQL/SQLite URL such as "file:./local.db" or "libsql://<database>".');
+
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.url(),
+    DATABASE_URL: databaseUrlSchema,
     APP_BASE_URL: z.url().default("http://localhost:3000"),
     BETTER_AUTH_SECRET: z.string().min(1),
     CONTACT_TO_EMAIL: z.preprocess(emptyStringAsUndefined, z.email().default("me@mikecebul.com")),

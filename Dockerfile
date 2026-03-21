@@ -9,7 +9,7 @@ FROM base AS deps
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 
 RUN HUSKY=0 pnpm install --frozen-lockfile
 
@@ -26,7 +26,7 @@ FROM base AS prod-deps
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 
 RUN HUSKY=0 pnpm install --frozen-lockfile --prod --ignore-scripts
 
@@ -38,11 +38,13 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
 
+RUN mkdir -p /data
+
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=build /app/.output ./.output
 COPY --from=build /app/drizzle ./drizzle
 COPY --from=build /app/scripts ./scripts
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 
 EXPOSE 3000
 
