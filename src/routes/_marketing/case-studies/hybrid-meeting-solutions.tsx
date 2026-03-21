@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_marketing/case-studies/hybrid-meeting-so
   head: () => ({
     meta: [
       {
-        title: "Hybrid Meeting Solutions Case Study | Mike Cebul",
+        title: "Hybrid Meeting Solutions Case Study | Mike Cebulski",
       },
       {
         name: "description",

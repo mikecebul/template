@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_marketing/")({
   head: () => ({
     meta: [
       {
-        title: "Mike Cebul | Northern Michigan Technical Consulting",
+        title: "Mike Cebulski | Northern Michigan Technical Consulting",
       },
       {
         name: "description",

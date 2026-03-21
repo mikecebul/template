@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_marketing/blog")({
   head: () => ({
     meta: [
       {
-        title: "Blog | Mike Cebul",
+        title: "Blog | Mike Cebulski",
       },
       {
         name: "description",

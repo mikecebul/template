@@ -13,11 +13,16 @@ export type MarketingPath =
 
 export type ServiceSummary = {
   bullets: string[];
+  ctaLabel: string;
   description: string;
   eyebrow: string;
   featured?: boolean;
   headline: string;
   price: string;
+  priceDetail?: {
+    amount: string;
+    label: string;
+  };
   priceSuffix: string;
   title: string;
 };
@@ -25,6 +30,7 @@ export type ServiceSummary = {
 export const marketingServices: ServiceSummary[] = [
   {
     bullets: ["Discovery workshops", "System mapping", "AI adoption planning"],
+    ctaLabel: "Inquire for Dates",
     description:
       "Operational consulting for teams that need a practical path from manual work to repeatable systems.",
     eyebrow: "Consulting",
@@ -35,22 +41,32 @@ export const marketingServices: ServiceSummary[] = [
   },
   {
     bullets: ["Custom design", "SEO foundations", "Ongoing content support"],
+    ctaLabel: "View Portfolio",
     description:
       "Marketing sites and web experiences designed to look polished, load fast, and stay easy to evolve.",
     eyebrow: "Websites",
     featured: true,
-    headline: "Marketing websites",
-    price: "$600",
+    headline: "Business websites",
+    price: "$2400",
+    priceDetail: {
+      amount: "+$100/mo",
+      label: "hosting + unlimited edits",
+    },
     priceSuffix: "setup",
     title: "A sharper digital presence without the agency overhead.",
   },
   {
     bullets: ["Room planning", "AV integration", "Support documentation"],
+    ctaLabel: "Consult on Hardware",
     description:
       "Hybrid meeting environments that help in-room and remote participants feel equally present and heard.",
     eyebrow: "AV Systems",
     headline: "Hybrid meeting solutions",
-    price: "$2000",
+    price: "$3200",
+    priceDetail: {
+      amount: "+$100/mo",
+      label: "device management",
+    },
     priceSuffix: "setup",
     title: "Boardrooms and studios built for calm, confident collaboration.",
   },

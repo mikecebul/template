@@ -1,28 +1,31 @@
 import {
   IconArrowRight,
+  IconBrandLinkedin,
+  IconBrandX,
   IconBolt,
   IconBrandZoom,
+  IconCheck,
   IconCpu,
   IconMapPin,
   IconNotebook,
   IconSparkles,
   IconWorldWww,
 } from "@tabler/icons-react";
-import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { motion } from "motion/react";
+import { useState, type ReactNode } from "react";
 
 import { ContactForm } from "@/components/contact-form";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 import type { CaseStudyData, MarketingPath } from "@/lib/marketing-content";
 import {
   aboutHighlights,
@@ -40,7 +43,14 @@ import { cn } from "@/lib/utils";
 const serviceIconMap = {
   "AI & automation consulting": IconSparkles,
   "Hybrid meeting solutions": IconBrandZoom,
-  "Marketing websites": IconWorldWww,
+  "Business websites": IconWorldWww,
+} as const;
+
+const navHighlightTransition = {
+  type: "spring",
+  stiffness: 460,
+  damping: 34,
+  mass: 0.9,
 } as const;
 
 export function MarketingLayout() {
@@ -63,16 +73,15 @@ export function MarketingLayout() {
 export function MarketingHomePage() {
   return (
     <MarketingPageMain>
-      <section className="mx-auto grid max-w-[1220px] gap-8 px-4 pt-6 sm:px-6 lg:grid-cols-[minmax(0,1.16fr)_minmax(320px,0.84fr)] lg:items-center lg:px-12">
+      <section className="mx-auto grid max-w-305 gap-8 px-4 pt-6 sm:px-6 lg:grid-cols-[minmax(0,1.16fr)_minmax(320px,0.84fr)] lg:items-center lg:px-12">
         <div className="flex flex-col gap-6">
           <MarketingEyebrow>Independent technology services</MarketingEyebrow>
-          <div className="max-w-[46rem] space-y-5">
-            <h1 className="max-w-[10.5ch] font-heading text-5xl tracking-[-0.08em] text-balance sm:text-[4.35rem] lg:text-[5.6rem]">
-              Elevate Your
-              <span className="block text-[var(--marketing-gold)]">Business</span>
-              <span className="block">with Technology.</span>
+          <div className="max-w-184 space-y-5">
+            <h1 className="max-w-[10.5ch] font-heading text-5xl font-semibold tracking-tighter text-balance sm:text-[4.35rem] lg:text-[5.6rem]">
+              Elevate Your <span className="text-(--marketing-gold)">Business</span> with Modern
+              Tech.
             </h1>
-            <p className="max-w-xl text-base leading-7 text-[var(--marketing-copy)] sm:text-lg">
+            <p className="max-w-xl text-base leading-7 text-(--marketing-copy) sm:text-lg">
               Mike Cebulski provides hands-on technical services across web systems, automation, AV,
               and hardware integration for businesses throughout Northern Michigan.
             </p>
@@ -117,13 +126,17 @@ export function MarketingHomePage() {
         </div>
         <div className="space-y-5 text-base leading-8 text-[var(--marketing-copy)]">
           <p>
-            Based in the nautical heart of Charlevoix, MI, I operate at the intersection of complex
-            problem solving and elegant technical execution. My mission is to provide businesses
-            with the technical backbone they need to scale without friction.
+            Based in Charlevoix the beautiful, I turn overwhelming tech issues into simple
+            solutions. My focus is user experience first so the user doesn't even notice the
+            complexity underneath. Over the years I have developed trust in our community from local
+            non-profits to courts across Michigan. On top of tech integrations I am also a certified
+            counselor at BASES here in Charlevoix. I have discovered a passion for helping others
+            and improving work efficiency. My mission is to provide businesses with the technical
+            backbone they need to scale without friction.
           </p>
           <p>
-            Whether I&apos;m architecting a custom web experience or designing an automated
-            boardroom workflow, the focus stays the same: reliability, performance, and future-proof
+            Whether I&apos;m architecting a custom web experience or designing an automated hybrid
+            meeting room, the focus stays the same: reliability, performance, and future-proof
             design.
           </p>
           <MarketingInlineLink to="/about">Learn more about the journey</MarketingInlineLink>
@@ -132,7 +145,6 @@ export function MarketingHomePage() {
 
       <MarketingServicesOverview />
       <MarketingLocalRootsSection />
-      <MarketingPreviewGrid />
       <MarketingCtaSection />
     </MarketingPageMain>
   );
@@ -581,13 +593,13 @@ function MarketingServicesOverview() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-3">
           <MarketingEyebrow>Core Services</MarketingEyebrow>
-          <h2 className="font-heading text-3xl tracking-[-0.05em] sm:text-4xl">
-            Built for businesses that want momentum without noise.
+          <h2 className="max-w-4xl font-heading text-3xl tracking-[-0.05em] sm:text-4xl">
+            Services designed for real business needs.
           </h2>
         </div>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+      <div className="mt-16 grid gap-6 lg:grid-cols-3 lg:items-stretch">
         {marketingServices.map((service) => {
           const Icon = getServiceIcon(service.headline);
 
@@ -595,73 +607,89 @@ function MarketingServicesOverview() {
             <article
               key={service.headline}
               className={cn(
-                "relative flex h-full flex-col rounded-[32px] border border-white/8 bg-[rgba(19,27,46,0.86)] p-7 shadow-[0_22px_60px_rgba(0,0,0,0.28)]",
+                "relative flex min-h-[640px] flex-col overflow-visible rounded-[34px] border border-white/8 bg-[linear-gradient(180deg,rgba(21,29,48,0.96),rgba(18,25,42,0.98))] px-8 py-7 shadow-[0_24px_70px_rgba(0,0,0,0.28)]",
                 service.featured &&
-                  "border-[var(--marketing-gold)]/45 bg-[linear-gradient(180deg,rgba(34,42,61,0.98),rgba(19,27,46,0.98))]",
+                  "border-[var(--marketing-gold)]/80 bg-[linear-gradient(180deg,rgba(43,52,75,0.98),rgba(24,31,49,0.98))] shadow-[0_28px_90px_rgba(0,0,0,0.34)] lg:-my-3",
               )}
             >
               {service.featured ? (
-                <div className="absolute top-6 right-6 rounded-full border border-[var(--marketing-gold)]/30 bg-[var(--marketing-gold)] px-3 py-1 text-[11px] font-semibold tracking-[0.24em] text-[var(--marketing-gold-foreground)] uppercase">
-                  Featured
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[rgba(60,47,0,0.12)] bg-[var(--marketing-gold)] px-6 py-2 text-[11px] font-semibold tracking-[0.22em] text-[var(--marketing-gold-foreground)] uppercase shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
+                  Most Popular
                 </div>
               ) : null}
 
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-[var(--marketing-panel-strong)] text-[var(--marketing-gold)]">
+              <div
+                className={cn(
+                  "grid grid-cols-[auto_minmax(0,1fr)] items-start gap-5",
+                  service.featured && "pt-8",
+                )}
+              >
+                <div className="flex size-20 items-center justify-center rounded-[24px] bg-[rgba(53,61,86,0.7)] text-[var(--marketing-gold)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
                   <Icon className="size-6" />
                 </div>
-                <div className="text-right">
-                  <p className="text-xs tracking-[0.28em] text-[var(--marketing-sky)] uppercase">
+                <div className="min-w-0 pt-1 text-right">
+                  <p className="text-sm tracking-[0.18em] text-[var(--marketing-sky)] uppercase sm:text-base">
                     {service.eyebrow}
                   </p>
-                  <div className="mt-3">
-                    <span className="font-heading text-3xl tracking-[-0.05em] text-[var(--marketing-gold)]">
+                  <div className="mt-3 flex items-end justify-end gap-2">
+                    <span className="font-heading text-4xl leading-none tracking-[-0.06em] text-[var(--marketing-gold)] sm:text-5xl">
                       {service.price}
                     </span>
-                    <span className="ml-2 text-sm text-[var(--marketing-copy)]">
+                    <span className="pb-1 text-base text-[var(--marketing-copy)]">
                       {service.priceSuffix}
                     </span>
                   </div>
+                  {service.priceDetail ? (
+                    <div className="mt-1.5 inline-flex self-end rounded-[14px] px-1 text-right">
+                      <div className="flex flex-col items-end gap-0.5">
+                        <span className="text-[0.95rem] leading-none whitespace-nowrap text-[var(--marketing-copy)]">
+                          {service.priceDetail.amount}
+                        </span>
+                        <span className="text-[0.82rem] leading-none tracking-[0.01em] whitespace-nowrap text-[var(--marketing-copy)]/82">
+                          {service.priceDetail.label}
+                        </span>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
-              <div className="mt-8">
-                <p className="text-sm font-medium text-[var(--marketing-heading)]">
+              <div className="mt-14 flex flex-1 flex-col">
+                <h3 className="max-w-[13.5ch] font-heading text-[2.1rem] leading-[1.06] tracking-[-0.06em] text-balance sm:text-[2.45rem]">
                   {service.headline}
-                </p>
-                <h3 className="mt-3 font-heading text-3xl leading-tight tracking-[-0.05em]">
-                  {service.title}
                 </h3>
-                <p className="mt-4 text-sm leading-7 text-[var(--marketing-copy)]">
+                <p className="mt-6 text-lg leading-8 text-[var(--marketing-copy)]">
+                  {service.title}
+                </p>
+                <p className="mt-4 text-base leading-8 text-[var(--marketing-copy)]/92">
                   {service.description}
                 </p>
+
+                <ul className="mt-10 flex flex-1 flex-col gap-5 text-[1.02rem] text-[var(--marketing-heading)]">
+                  {service.bullets.map((bullet) => (
+                    <li key={bullet} className="flex items-center gap-4">
+                      <span className="flex size-6 items-center justify-center rounded-full bg-[#ffcd1f] text-[#1b2340] shadow-[0_0_0_3px_rgba(255,205,31,0.12)]">
+                        <IconCheck className="size-3.5 stroke-[3]" />
+                      </span>
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              <ul className="mt-6 flex flex-1 flex-col gap-3 text-sm text-[var(--marketing-heading)]">
-                {service.bullets.map((bullet) => (
-                  <li key={bullet} className="flex items-center gap-3">
-                    <span className="flex size-5 items-center justify-center rounded-full border border-[var(--marketing-gold)]/40 bg-[var(--marketing-gold)]/10 text-[var(--marketing-gold)]">
-                      <IconArrowRight className="size-3" />
-                    </span>
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-
               <MarketingButtonLink
-                className="mt-8 w-full justify-center"
+                className="mt-10 h-16 w-full justify-center rounded-[22px] border-transparent bg-[rgba(53,61,86,0.92)] px-6 text-base font-semibold text-[var(--marketing-gold)] shadow-none hover:bg-[rgba(64,73,102,0.98)]"
                 tone="secondary"
+                showIcon={false}
                 to={
                   service.headline === "Hybrid meeting solutions"
                     ? "/case-studies/hybrid-meeting-solutions"
-                    : service.headline === "Marketing websites"
+                    : service.headline === "Business websites"
                       ? "/case-studies/websites"
                       : "/contact"
                 }
               >
-                {service.headline === "AI & automation consulting"
-                  ? "Discuss the workflow"
-                  : "View case study"}
+                {service.ctaLabel}
               </MarketingButtonLink>
             </article>
           );
@@ -696,50 +724,6 @@ function MarketingLocalRootsSection() {
           <p className="mt-1 text-sm text-[var(--marketing-copy)]">45.3181° N, 85.2584° W</p>
         </div>
       </div>
-    </section>
-  );
-}
-
-function MarketingPreviewGrid() {
-  return (
-    <section className="mx-auto mt-20 grid max-w-[1220px] gap-6 px-4 sm:px-6 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)] lg:px-12">
-      <Link
-        className="group overflow-hidden rounded-[32px] border border-white/8 bg-[rgba(34,42,61,0.95)] p-8 transition-transform hover:-translate-y-1"
-        to="/blog"
-      >
-        <div className="flex h-full flex-col justify-between gap-8">
-          <div>
-            <MarketingEyebrow>Journal</MarketingEyebrow>
-            <h2 className="mt-3 max-w-lg font-heading text-3xl tracking-[-0.05em] sm:text-4xl">
-              Latest Insights & Technical Deep Dives
-            </h2>
-          </div>
-          <div className="flex items-end justify-between gap-4">
-            <p className="max-w-md text-sm leading-7 text-[var(--marketing-copy)]">
-              Exploring the frontier of AI integration, web systems, and implementation patterns
-              that keep real businesses moving.
-            </p>
-            <IconArrowRight className="size-5 text-[var(--marketing-gold)] transition-transform group-hover:translate-x-1" />
-          </div>
-        </div>
-      </Link>
-
-      <Link
-        className="group rounded-[32px] border border-[var(--marketing-gold)]/40 bg-[var(--marketing-gold)] p-8 text-[var(--marketing-gold-foreground)] transition-transform hover:-translate-y-1"
-        to="/about"
-      >
-        <p className="text-sm tracking-[0.28em] uppercase opacity-70">The Process</p>
-        <h2 className="mt-4 font-heading text-3xl tracking-[-0.04em]">
-          Discover how the work gets shaped.
-        </h2>
-        <p className="mt-4 text-sm leading-7 opacity-80">
-          The about page explains the point of view behind the systems, the design language, and the
-          practical choices that drive the final build.
-        </p>
-        <div className="mt-8 inline-flex items-center rounded-full bg-[var(--marketing-ink)] px-4 py-2 text-sm font-semibold text-[var(--marketing-gold)]">
-          View About
-        </div>
-      </Link>
     </section>
   );
 }
@@ -787,7 +771,7 @@ function MarketingCtaSection() {
 }
 
 function MarketingNav({ pathname }: { readonly pathname: string }) {
-  const navigate = useNavigate();
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const isCaseStudyRoute = pathname.startsWith("/case-studies");
 
   return (
@@ -797,55 +781,102 @@ function MarketingNav({ pathname }: { readonly pathname: string }) {
           className="font-heading text-xl tracking-[-0.06em] text-[var(--marketing-gold)]"
           to="/"
         >
-          Mike Cebul
+          Mike Cebulski
         </Link>
 
         <nav className="flex flex-wrap items-center justify-center gap-2 text-sm text-[var(--marketing-copy)]">
           <MarketingRouteLink active={pathname === "/"} label="Home" to="/" />
           <MarketingRouteLink active={pathname === "/services"} label="Services" to="/services" />
           <MarketingRouteLink active={pathname === "/about"} label="About" to="/about" />
-          <MarketingRouteLink active={pathname === "/blog"} label="Blog" to="/blog" />
           <MarketingRouteLink active={pathname === "/contact"} label="Contact" to="/contact" />
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "rounded-full px-3 text-[var(--marketing-copy)] hover:text-[var(--marketing-heading)]",
-                    isCaseStudyRoute &&
-                      "bg-white/6 text-[var(--marketing-gold)] hover:text-[var(--marketing-gold)]",
-                  )}
-                />
+          <NavigationMenu
+            align="center"
+            className="flex-none"
+            key={pathname}
+            onValueChange={(value, eventDetails) => {
+              if (eventDetails.reason === "trigger-press") {
+                return;
               }
-            >
-              Case Studies
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="center"
-              className="w-64 rounded-2xl border border-white/10 bg-[var(--marketing-panel)] p-2 text-[var(--marketing-heading)]"
-            >
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>Selected Work</DropdownMenuLabel>
-                {caseStudies.map((caseStudy) => (
-                  <DropdownMenuItem
-                    key={caseStudy.path}
-                    onClick={() => navigate({ to: caseStudy.path })}
-                  >
-                    <div className="flex flex-col">
-                      <span>{caseStudy.eyebrow}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {caseStudy.path.endsWith("websites")
-                          ? "Website system"
-                          : "Hybrid meeting room"}
-                      </span>
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+              setOpenMenu(value ?? null);
+            }}
+            value={openMenu}
+          >
+            <NavigationMenuList>
+              <NavigationMenuItem value="case-studies">
+                <NavigationMenuTrigger
+                  className={cn(
+                    "relative overflow-hidden rounded-full border-none bg-transparent px-3 py-2 text-[var(--marketing-copy)] shadow-none hover:bg-transparent hover:text-[var(--marketing-heading)] focus:bg-transparent focus:text-[var(--marketing-heading)] focus-visible:ring-0 data-popup-open:bg-transparent data-popup-open:text-[var(--marketing-heading)] data-popup-open:hover:bg-transparent data-popup-open:hover:text-[var(--marketing-heading)] data-open:bg-transparent data-open:text-[var(--marketing-heading)] data-open:hover:bg-transparent data-open:hover:text-[var(--marketing-heading)]",
+                    isCaseStudyRoute &&
+                      "text-[var(--marketing-gold)] hover:text-[var(--marketing-gold)] data-popup-open:text-[var(--marketing-gold)] data-popup-open:hover:text-[var(--marketing-gold)] data-open:text-[var(--marketing-gold)] data-open:hover:text-[var(--marketing-gold)]",
+                  )}
+                >
+                  {isCaseStudyRoute ? <MarketingNavHighlight /> : null}
+                  <span className="relative z-10">Case Studies</span>
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="w-[360px] p-0">
+                  <div className="grid gap-1 rounded-[24px] border border-white/10 bg-[var(--marketing-panel)] p-2 text-[var(--marketing-heading)] shadow-[0_24px_70px_rgba(0,0,0,0.32)]">
+                    {caseStudies.map((caseStudy) => {
+                      const isActiveCaseStudy = pathname === caseStudy.path;
+                      const isWebsiteCaseStudy = caseStudy.path.endsWith("websites");
+                      const CaseStudyIcon = isWebsiteCaseStudy ? IconWorldWww : IconBrandZoom;
+
+                      return (
+                        <Link
+                          key={caseStudy.path}
+                          className={cn(
+                            "group rounded-[18px] border border-transparent px-4 py-3 transition-all hover:border-white/10 hover:bg-white/3",
+                            isActiveCaseStudy &&
+                              "border-[var(--marketing-gold)]/35 bg-[linear-gradient(180deg,rgba(255,236,185,0.08),rgba(255,236,185,0.03))] shadow-[inset_0_1px_0_rgba(255,236,185,0.08)]",
+                          )}
+                          onClick={() => setOpenMenu(null)}
+                          to={caseStudy.path}
+                        >
+                          <div className="flex items-start gap-3">
+                            <span
+                              className={cn(
+                                "mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[rgba(53,61,86,0.7)] text-[var(--marketing-gold)]",
+                                isActiveCaseStudy &&
+                                  "bg-[rgba(255,236,185,0.1)] ring-1 ring-[var(--marketing-gold)]/20",
+                              )}
+                            >
+                              <CaseStudyIcon className="size-5" />
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-[11px] tracking-[0.2em] text-[var(--marketing-sky)] uppercase">
+                                {caseStudy.eyebrow}
+                              </p>
+                              <p
+                                className={cn(
+                                  "mt-1 text-sm font-medium text-[var(--marketing-heading)]",
+                                  isActiveCaseStudy && "text-[var(--marketing-gold)]",
+                                )}
+                              >
+                                {isWebsiteCaseStudy
+                                  ? "Business websites"
+                                  : "Hybrid meeting solutions"}
+                              </p>
+                              <p className="mt-1 text-xs leading-5 text-[var(--marketing-copy)]">
+                                {isWebsiteCaseStudy
+                                  ? "Strategy, design, and maintainable site systems."
+                                  : "AV planning, Zoom Rooms, and practical room integration."}
+                              </p>
+                            </div>
+                            <IconArrowRight
+                              className={cn(
+                                "mt-1 size-4 shrink-0 text-[var(--marketing-gold)] opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100",
+                                isActiveCaseStudy && "opacity-100",
+                              )}
+                            />
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </nav>
 
         <MarketingButtonLink className="hidden sm:inline-flex" to="/contact">
@@ -868,13 +899,25 @@ function MarketingRouteLink({
   return (
     <Link
       className={cn(
-        "rounded-full px-3 py-2 transition-colors hover:text-[var(--marketing-heading)]",
-        active && "bg-white/6 text-[var(--marketing-gold)]",
+        "relative overflow-hidden rounded-full px-3 py-2 transition-colors hover:text-[var(--marketing-heading)]",
+        active && "text-[var(--marketing-gold)]",
       )}
       to={to}
     >
-      {label}
+      {active ? <MarketingNavHighlight /> : null}
+      <span className="relative z-10">{label}</span>
     </Link>
+  );
+}
+
+function MarketingNavHighlight() {
+  return (
+    <motion.span
+      layoutId="marketing-nav-highlight"
+      className="absolute inset-0 rounded-full border border-[var(--marketing-gold)]/20 bg-white/6 shadow-[0_8px_24px_rgba(0,0,0,0.18)]"
+      initial={false}
+      transition={navHighlightTransition}
+    />
   );
 }
 
@@ -882,6 +925,7 @@ type MarketingButtonLinkProps = {
   readonly children: ReactNode;
   readonly className?: string;
   readonly href?: string;
+  readonly showIcon?: boolean;
   readonly to?: MarketingPath;
   readonly tone?: "primary" | "secondary";
 };
@@ -890,6 +934,7 @@ function MarketingButtonLink({
   children,
   className,
   href,
+  showIcon = true,
   to,
   tone = "primary",
 }: MarketingButtonLinkProps) {
@@ -909,12 +954,12 @@ function MarketingButtonLink({
       {to ? (
         <Link className={buttonClassName} to={to}>
           {children}
-          <IconArrowRight data-icon="inline-end" />
+          {showIcon ? <IconArrowRight data-icon="inline-end" /> : null}
         </Link>
       ) : (
         <a className={buttonClassName} href={href}>
           {children}
-          <IconArrowRight data-icon="inline-end" />
+          {showIcon ? <IconArrowRight data-icon="inline-end" /> : null}
         </a>
       )}
     </div>
@@ -1029,44 +1074,81 @@ function PaginationChip({
 function MarketingFooter() {
   return (
     <footer className="border-t border-white/6 bg-[rgba(7,16,31,0.96)]">
-      <div className="mx-auto flex max-w-[1280px] flex-col gap-8 px-4 py-12 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-12">
-        <div className="space-y-2">
-          <p className="font-heading text-xl tracking-[-0.05em] text-[var(--marketing-heading)]">
-            Mike Cebul
-          </p>
-          <p className="text-xs tracking-[0.24em] text-[var(--marketing-copy-soft)] uppercase">
-            Northern Michigan consulting for websites, systems, and automation
+      <div className="mx-auto grid max-w-[1280px] gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[minmax(0,1.2fr)_220px_220px] lg:px-12">
+        <div className="flex flex-col gap-6">
+          <div className="space-y-3">
+            <p className="font-heading text-2xl tracking-[-0.05em] text-[var(--marketing-heading)]">
+              Mike Cebulski
+            </p>
+            <p className="max-w-sm text-sm leading-7 text-[var(--marketing-copy)]">
+              Independent technical consulting for business websites, hybrid meeting systems, and
+              automation in Northern Michigan.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <a
+              aria-label="Mike Cebulski on X"
+              className="flex size-11 items-center justify-center rounded-2xl border border-white/8 bg-white/3 text-[var(--marketing-copy)] transition-colors hover:border-[var(--marketing-gold)]/25 hover:text-[var(--marketing-gold)]"
+              href="https://x.com/MikeCebul"
+              rel="noreferrer"
+              target="_blank"
+            >
+              <IconBrandX className="size-5" />
+            </a>
+            <a
+              aria-label="Mike Cebulski on LinkedIn"
+              className="flex size-11 items-center justify-center rounded-2xl border border-white/8 bg-white/3 text-[var(--marketing-copy)] transition-colors hover:border-[var(--marketing-gold)]/25 hover:text-[var(--marketing-gold)]"
+              href="https://www.linkedin.com/in/mikecebul/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              <IconBrandLinkedin className="size-5" />
+            </a>
+          </div>
+
+          <p className="text-sm text-[var(--marketing-copy-soft)]">
+            © {new Date().getFullYear()} MIKECEBUL LLC. All rights reserved.
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-5 text-sm text-[var(--marketing-copy)]">
-          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/">
-            Home
-          </Link>
-          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/services">
-            Services
-          </Link>
-          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/about">
-            About
-          </Link>
-          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/blog">
-            Blog
-          </Link>
-          <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/contact">
-            Contact
-          </Link>
-          <Link
-            className="transition-colors hover:text-[var(--marketing-heading)]"
-            to="/case-studies/hybrid-meeting-solutions"
-          >
-            Hybrid Meeting Case Study
-          </Link>
-          <Link
-            className="transition-colors hover:text-[var(--marketing-heading)]"
-            to="/case-studies/websites"
-          >
-            Website Case Study
-          </Link>
+        <div className="space-y-4">
+          <p className="text-sm font-medium text-[var(--marketing-heading)]">Services</p>
+          <div className="flex flex-col gap-3 text-sm text-[var(--marketing-copy)]">
+            <Link
+              className="transition-colors hover:text-[var(--marketing-heading)]"
+              to="/services"
+            >
+              Overview
+            </Link>
+            <Link
+              className="transition-colors hover:text-[var(--marketing-heading)]"
+              to="/case-studies/websites"
+            >
+              Business Websites
+            </Link>
+            <Link
+              className="transition-colors hover:text-[var(--marketing-heading)]"
+              to="/case-studies/hybrid-meeting-solutions"
+            >
+              Hybrid Meeting Solutions
+            </Link>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <p className="text-sm font-medium text-[var(--marketing-heading)]">Company</p>
+          <div className="flex flex-col gap-3 text-sm text-[var(--marketing-copy)]">
+            <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/">
+              Home
+            </Link>
+            <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/about">
+              About
+            </Link>
+            <Link className="transition-colors hover:text-[var(--marketing-heading)]" to="/contact">
+              Contact
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
@@ -1080,6 +1162,6 @@ function getServiceIcon(headline: string) {
     case "Hybrid meeting solutions":
       return serviceIconMap["Hybrid meeting solutions"];
     default:
-      return serviceIconMap["Marketing websites"];
+      return serviceIconMap["Business websites"];
   }
 }

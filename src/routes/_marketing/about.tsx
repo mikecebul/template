@@ -7,12 +7,12 @@ export const Route = createFileRoute("/_marketing/about")({
   head: () => ({
     meta: [
       {
-        title: "About | Mike Cebul",
+        title: "About | Mike Cebulski",
       },
       {
         name: "description",
         content:
-          "Learn more about Mike Cebul's approach to websites, hybrid meeting systems, and practical technical execution in Northern Michigan.",
+          "Learn more about Mike Cebulski's approach to websites, hybrid meeting systems, and practical technical execution in Northern Michigan.",
       },
     ],
   }),
